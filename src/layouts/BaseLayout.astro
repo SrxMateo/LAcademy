@@ -2,6 +2,12 @@
 import '../styles/global.css';
 import { ViewTransitions } from 'astro:transitions';
 
+declare global {
+  interface Window {
+    unlockAchievement: (id: string, name: string, icon: string, xp: number) => void;
+  }
+}
+
 interface Props {
 	title: string;
 	description?: string;
@@ -41,6 +47,40 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
 			});
 		</script>
 		<style is:global>
+      /* Notificaciones de Logros */
+      .achievement-toast {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: rgba(10, 10, 15, 0.95);
+        border: 1px solid var(--primary);
+        border-left: 5px solid var(--primary);
+        padding: 1.25rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        z-index: 10000;
+        transform: translateX(120%);
+        transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        max-width: 350px;
+      }
+      .achievement-toast.active { transform: translateX(0); }
+      .achievement-icon {
+        font-size: 2rem;
+        background: rgba(99, 102, 241, 0.1);
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.75rem;
+      }
+      .achievement-info h4 { margin: 0; color: var(--primary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+      .achievement-info p { margin: 0.25rem 0 0; font-size: 1rem; font-weight: 600; color: #fff; }
+      .achievement-xp { font-size: 0.75rem; color: var(--accent); font-weight: 800; margin-top: 0.25rem; display: block; }
+
 			.bg-glow {
 				position: fixed;
 				top: 0;
@@ -147,6 +187,16 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
           <div style="color:var(--primary); font-weight:bold;">Welcome to LumaOS v2.0.0 (Astro-Kernel)</div>
           <div style="font-size:0.7rem; opacity:0.5; margin-bottom:1rem;">Type 'help' to see available commands. Press Esc to close.</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Achievement Toast -->
+    <div id="achievement-toast" class="achievement-toast">
+      <div class="achievement-icon" id="achievement-icon">🏆</div>
+      <div class="achievement-info">
+        <h4>¡Logro Desbloqueado!</h4>
+        <p id="achievement-name">Nombre del Logro</p>
+        <span class="achievement-xp" id="achievement-xp">+500 XP</span>
       </div>
     </div>
 
@@ -258,11 +308,47 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
         input?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
       }
 
+      function setupAchievements() {
+        const toast = document.getElementById('achievement-toast');
+        const nameEl = document.getElementById('achievement-name');
+        const iconEl = document.getElementById('achievement-icon');
+        const xpEl = document.getElementById('achievement-xp');
+
+        window.unlockAchievement = (id: string, name: string, icon: string, xp: number) => {
+          const unlocked = JSON.parse(localStorage.getItem('lacademy_achievements') || '[]');
+          if (unlocked.includes(id)) return;
+
+          unlocked.push(id);
+          localStorage.setItem('lacademy_achievements', JSON.stringify(unlocked));
+
+          // Actualizar XP
+          const currentXP = parseInt(localStorage.getItem('lacademy_xp') || '0');
+          localStorage.setItem('lacademy_xp', (currentXP + xp).toString());
+
+          // Mostrar Toast
+          if (toast && nameEl && iconEl && xpEl) {
+            nameEl.textContent = name;
+            iconEl.textContent = icon;
+            xpEl.textContent = `+${xp} XP`;
+            toast.classList.add('active');
+            
+            // Sonido opcional (puedes añadir uno luego)
+            setTimeout(() => toast.classList.remove('active'), 5000);
+          }
+        };
+
+        // Logros automáticos
+        if (window.location.pathname === '/leaderboard') {
+          window.unlockAchievement('explorer-rank', 'Espíritu Competitivo', '🥈', 200);
+        }
+      }
+
 			// Run on first load
 			applyTheme();
       setupAITutor();
       setupParticles();
       setupConsole();
+      setupAchievements();
 
 			// Run on every view transition
 			document.addEventListener('astro:after-swap', () => {
@@ -270,6 +356,7 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
         setupAITutor();
         setupParticles();
         setupConsole();
+        setupAchievements();
       });
 
       function setupParticles() {
@@ -327,6 +414,12 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
         input?.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
             const cmd = input.value.toLowerCase().trim();
+            
+            // Logro por usar la terminal
+            if (window.unlockAchievement) {
+              window.unlockAchievement('terminal-user', 'Hacker Junior', '⌨️', 300);
+            }
+
             const log = (text: string) => {
               if (output) output.innerHTML = `<div>> ${text}</div>` + output.innerHTML;
             };
