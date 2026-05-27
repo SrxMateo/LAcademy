@@ -24,7 +24,7 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 		<script is:inline>
-			const theme = (() => {
+			const getTheme = () => {
 				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
 					return localStorage.getItem('theme');
 				}
@@ -32,8 +32,13 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
 					return 'dark';
 				}
 				return 'light';
-			})();
+			};
+			const theme = getTheme();
 			document.documentElement.setAttribute('data-theme', theme);
+
+			document.addEventListener('astro:after-swap', () => {
+				document.documentElement.setAttribute('data-theme', getTheme());
+			});
 		</script>
 		<style is:global>
 			.bg-glow {
