@@ -257,17 +257,35 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
           linkedin: "En LinkedIn, optimiza tu 'About' con palabras clave, usa una foto profesional y comparte tus proyectos de L-Academy.",
           python: "Python es el lenguaje rey de la IA. Úsalo para automatizar tareas, analizar datos o crear bots con librerías como Selenium o PyAutoGUI.",
           cyber: "La ciberseguridad empieza por nunca confiar en la entrada del usuario. Sanitiza tus formularios y usa HTTPS en todos tus sitios.",
-          video: "Herramientas como Runway Gen-2 te permiten crear videos desde texto. HeyGen es ideal para avatares realistas que hablan.",
-          astro: "Astro es un framework web ultra-rápido que entrega CERO JavaScript por defecto. Es el corazón de esta academia.",
+          video: "Dominar la IA para video implica usar Runway Gen-2 para clips cinematográficos y HeyGen para avatares. ¿Sabías que puedes animar fotos estáticas con Pika Labs?",
+          astro: "Astro es el framework que usamos aquí. Es ideal porque elimina el JS innecesario, haciendo que L-Academy cargue en milisegundos.",
           react: "React es una librería de JS para crear interfaces basadas en componentes. Es el estándar de la industria actual.",
-          java: "Java es un lenguaje robusto y tipado, ideal para plugins de Minecraft y grandes sistemas empresariales.",
+          java: "Java es un lenguaje robusto y tipado. Si aprendes Java, aprender C# o C++ te será mucho más fácil.",
           sql: "SQL es el lenguaje para hablar con bases de datos relacionales como PostgreSQL o MySQL.",
           docker: "Docker empaqueta tu app en contenedores para que funcione igual en cualquier servidor VPS.",
           api: "Una API permite que dos sistemas hablen entre sí. REST y GraphQL son los estilos más comunes.",
-          vps: "Tu VPS es tu propio servidor en la nube. Úsala para desplegar tus proyectos de L-Academy con Nginx y PM2."
+          vps: "Tu VPS es tu propio servidor en la nube. Úsala para desplegar tus proyectos con Nginx y PM2.",
+          imagenes: "Para imágenes pro, usa Midjourney para arte y DALL-E 3 para precisión. El secreto está en los 'Descriptor Prompts' como '--ar 16:9'.",
+          srxmateo: "SrxMateo es el arquitecto detrás de LumaXCorp y el creador de este ecosistema de aprendizaje.",
+          luma: "LumaXCorp y LumaXStudio son las entidades que impulsan el desarrollo tecnológico de estos proyectos."
         };
 
-        toggle?.addEventListener('click', () => chat?.classList.toggle('hidden'));
+        const getContextGreeting = () => {
+          const path = window.location.pathname;
+          if (path.includes('minecraft')) return "¡Hola! Veo que te interesa Minecraft. ¿Quieres saber cómo registrar un evento en Java?";
+          if (path.includes('cyber')) return "La seguridad es vital. ¿Tienes dudas sobre cómo proteger tus endpoints?";
+          if (path.includes('python')) return "Python es genial para bots. ¿Te ayudo con algún script de automatización?";
+          if (path.includes('video')) return "El video con IA es el futuro. ¿Hablamos de Runway o HeyGen?";
+          return "¡Hola! Soy tu tutor de L-Academy. Puedo responder sobre Programación, IA, VPS o Seguridad. ¿Qué quieres aprender hoy?";
+        };
+
+        toggle?.addEventListener('click', () => {
+          chat?.classList.toggle('hidden');
+          if (!chat?.classList.contains('hidden') && messages?.children.length <= 1) {
+            addMessage(getContextGreeting(), 'bot');
+          }
+        });
+
         close?.addEventListener('click', () => chat?.classList.add('hidden'));
 
         const addMessage = (text: string, type: 'user' | 'bot') => {
@@ -280,28 +298,31 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
         };
 
         const handleSend = () => {
-          const val = input?.value.toLowerCase();
+          const val = input?.value.toLowerCase().trim();
           if (!val) return;
           addMessage(input.value, 'user');
           input.value = '';
 
           setTimeout(() => {
-            let response = "Interesante pregunta. No tengo información específica sobre eso en mi base local, ¡pero sigue explorando los cursos!";
-            for (const key in knowledge) {
-              if (val.includes(key)) {
-                response = knowledge[key as keyof typeof knowledge];
-                break;
-              }
+            let response = "Es una buena pregunta. Mi base de datos actual cubre Astro, Java, Python, VPS, Docker, Ciberseguridad e IA. ¿Podrías ser más específico?";
+            
+            const keys = Object.keys(knowledge);
+            const match = keys.find(key => val.includes(key));
+            
+            if (match) {
+              response = knowledge[match as keyof typeof knowledge];
+            } else if (val.includes("que puedes") || val.includes("ayuda") || val.includes("puedes hacer")) {
+              response = "Puedo explicarte conceptos de: \n1. Programación (Java, Python, Astro)\n2. Servidores (VPS, Docker, SQL)\n3. IA (Prompts, Video, Imágenes)\n4. Tu carrera (LinkedIn, GitHub).";
             }
 
             if (personality?.value === 'socratic') {
-              response = `¿Qué crees tú que pasaría si...? ${response} ¿Cómo lo aplicarías en tu proyecto?`;
+              response = `¿Y cómo crees tú que ese concepto encaja en un proyecto real? ${response}`;
             } else if (personality?.value === 'strict') {
-              response = `¡Presta atención! Esto es vital: ${response} No cometas errores básicos.`;
+              response = `¡Escucha bien! Esto es fundamental: ${response} Asegúrate de practicarlo hoy mismo.`;
             }
 
             addMessage(response, 'bot');
-          }, 800);
+          }, 600);
         };
 
         send?.addEventListener('click', handleSend);
