@@ -5,6 +5,8 @@
 
 **LAcademy** es una plataforma educativa de alto rendimiento diseñada para centralizar cursos, recursos y herramientas de desarrollo. Este proyecto combina una interfaz moderna con una arquitectura robusta para ofrecer la mejor experiencia de aprendizaje.
 
+### 🌐 Acceso Directo: [lacademy.lumax.lat](https://lacademy.lumax.lat)
+
 ---
 
 ## 🚀 Características Principales
