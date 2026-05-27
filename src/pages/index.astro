@@ -103,12 +103,39 @@ const categories = [
     </section>
   </main>
 
-  <script>
-    function updateLobby() {
-      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
-      const badges = JSON.parse(localStorage.getItem('lacademy_badges') || '[]');
-      const total = 12;
-      const completed = Object.values(progress).filter(Boolean).length;
+  function updateLobby() {
+    const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+    const badges = JSON.parse(localStorage.getItem('lacademy_badges') || '[]');
+    const total = 12;
+
+    // Definir el orden secuencial de los cursos (IDs)
+    const courseOrder = [
+      "web-ai", "img-ai", "ai-video", "python-auto", 
+      "pro-tools", "frontend-master", "robust-dev", "cloud-infra",
+      "cyber-sec", "mc-plugins", "ml-ai", "study-ai"
+    ];
+
+    // Lógica de Bloqueo / Desbloqueo
+    courseOrder.forEach((id, index) => {
+      const card = document.getElementById(`card-${id}`);
+      if (card) {
+        // El primero siempre está abierto
+        if (index === 0) {
+          card.classList.remove('locked');
+        } else {
+          // El curso actual se desbloquea si el ANTERIOR está completado
+          const prevId = courseOrder[index - 1];
+          if (progress[prevId]) {
+            card.classList.remove('locked');
+          } else {
+            card.classList.add('locked');
+          }
+        }
+      }
+    });
+
+    const completed = Object.values(progress).filter(Boolean).length;
+  ...
       const pct = Math.round((completed / total) * 100) || 0;
       const pb = document.getElementById('overall-pb');
       const txt = document.getElementById('progress-pct');
