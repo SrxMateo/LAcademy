@@ -216,12 +216,12 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
               <span>Online • Experto en Código</span>
             </div>
           </div>
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <select id="ai-personality" class="personality-select">
-              <option value="standard">🤖 Normal</option>
-              <option value="socratic">🤔 Socrático</option>
-              <option value="strict">👨‍🏫 Estricto</option>
-            </select>
+          <div class="personality-container">
+            <div class="personality-tabs" id="personality-tabs">
+              <button class="p-tab active" data-value="standard" title="Modo Normal">🤖</button>
+              <button class="p-tab" data-value="socratic" title="Modo Socrático">🤔</button>
+              <button class="p-tab" data-value="strict" title="Modo Estricto">👨‍🏫</button>
+            </div>
             <button id="close-chat" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">×</button>
           </div>
         </div>
@@ -327,6 +327,20 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
           messages.scrollTop = messages.scrollHeight;
         };
 
+        const personalityTabs = document.querySelectorAll('.p-tab');
+        let currentPersonality = 'standard';
+
+        personalityTabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            personalityTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentPersonality = tab.getAttribute('data-value') || 'standard';
+            
+            const pNames: Record<string, string> = { standard: 'Normal', socratic: 'Socrático', strict: 'Estricto' };
+            addMessage(`Cambio de modo a: ${pNames[currentPersonality]}`, 'bot');
+          });
+        });
+
         const handleSend = (customText?: string) => {
           const val = customText || input?.value.toLowerCase().trim();
           if (!val) return;
@@ -345,9 +359,9 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
               response = "Puedo explicarte conceptos de: \n1. Programación (Java, Python, Astro)\n2. Servidores (VPS, Docker, SQL)\n3. IA (Prompts, Video, Imágenes)\n4. Tu carrera (LinkedIn, GitHub).";
             }
 
-            if (personality?.value === 'socratic') {
+            if (currentPersonality === 'socratic') {
               response = `¿Y cómo crees tú que ese concepto encaja en un proyecto real? ${response}`;
-            } else if (personality?.value === 'strict') {
+            } else if (currentPersonality === 'strict') {
               response = `¡Escucha bien! Esto es fundamental: ${response} Asegúrate de practicarlo hoy mismo.`;
             }
 
@@ -564,6 +578,17 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
         border-radius: 999px !important;
         padding: 0.75rem 1.5rem !important;
       }
+      .personality-container { display: flex; align-items: center; gap: 0.75rem; }
+      .personality-tabs { display: flex; background: rgba(0,0,0,0.2); padding: 0.25rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.1); }
+      .p-tab { background: none; border: none; padding: 0.4rem 0.6rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s; font-size: 1rem; filter: grayscale(1) opacity(0.6); }
+      .p-tab:hover { filter: grayscale(0.5) opacity(1); background: rgba(255,255,255,0.05); }
+      .p-tab.active { filter: grayscale(0) opacity(1); transform: scale(1.1); }
+      
+      /* Colores por personalidad */
+      .p-tab[data-value="standard"].active { background: var(--primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.4); }
+      .p-tab[data-value="socratic"].active { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+      .p-tab[data-value="strict"].active { background: #f43f5e; box-shadow: 0 0 10px rgba(244, 63, 94, 0.4); }
+
       .ai-chat-window {
         position: absolute;
         bottom: 5rem;
