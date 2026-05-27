@@ -48,28 +48,69 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
 			});
 		</script>
 		<style is:global>
-      /* Luma Toast */
+      /* Luma Toast Ultra-Premium */
       .luma-toast {
         position: fixed;
-        bottom: 2rem;
+        bottom: 2.5rem;
         left: 50%;
-        transform: translateX(-50%) translateY(100px);
-        background: rgba(10, 10, 15, 0.95);
-        border: 1px solid var(--primary);
-        padding: 0.75rem 1.5rem;
-        border-radius: 99px;
+        transform: translateX(-50%) translateY(120px) scale(0.9);
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem 2rem;
+        border-radius: 1.25rem;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        gap: 1.25rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.05);
         z-index: 10001;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         opacity: 0;
         pointer-events: none;
+        min-width: 300px;
+        overflow: hidden;
       }
-      .luma-toast.active { transform: translateX(-50%) translateY(0); opacity: 1; }
-      .toast-icon { font-size: 1.2rem; }
-      .toast-content p { margin: 0; font-size: 0.9rem; font-weight: 600; color: #fff; white-space: nowrap; }
+      .luma-toast.active { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+      
+      .toast-icon-box {
+        width: 38px;
+        height: 38px;
+        background: rgba(99, 102, 241, 0.15);
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        flex-shrink: 0;
+      }
+      
+      .toast-content { flex: 1; }
+      .toast-content p { margin: 0; font-size: 0.95rem; font-weight: 700; color: #fff; letter-spacing: 0.01em; }
+      
+      /* Barra de progreso de la notificación */
+      .toast-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 4px;
+        background: var(--primary);
+        width: 100%;
+        transform-origin: left;
+      }
+      .luma-toast.active .toast-progress {
+        animation: toast-timer 3s linear forwards;
+      }
+      @keyframes toast-timer {
+        from { transform: scaleX(1); }
+        to { transform: scaleX(0); }
+      }
+
+      /* Variaciones de color */
+      .luma-toast.success { border-bottom: 2px solid #22c55e; }
+      .luma-toast.error { border-bottom: 2px solid #f43f5e; }
+      .luma-toast.info { border-bottom: 2px solid #3b82f6; }
 
       /* Notificaciones de Logros */
       .achievement-toast {
@@ -214,12 +255,13 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
       </div>
     </div>
 
-    <!-- Luma Toast Notification -->
+    <!-- Luma Toast Notification Ultra -->
     <div id="luma-toast" class="luma-toast">
-      <div class="toast-icon" id="toast-icon">✨</div>
+      <div class="toast-icon-box" id="toast-icon">✨</div>
       <div class="toast-content">
         <p id="toast-message">Mensaje de notificación</p>
       </div>
+      <div class="toast-progress" id="toast-pb"></div>
     </div>
 
     <!-- Achievement Toast -->
@@ -451,17 +493,20 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
         const toast = document.getElementById('luma-toast');
         const messageEl = document.getElementById('toast-message');
         const iconEl = document.getElementById('toast-icon');
+        const pb = document.getElementById('toast-pb');
 
         window.notify = (message: string, icon: string = '✨', type: 'success' | 'error' | 'info' = 'success') => {
-          if (toast && messageEl && iconEl) {
+          if (toast && messageEl && iconEl && pb) {
+            // Limpiar clases previas
+            toast.className = 'luma-toast active ' + type;
             messageEl.textContent = message;
             iconEl.textContent = icon;
+
+            // Reset animación de barra de progreso
+            pb.style.animation = 'none';
+            pb.offsetHeight; // trigger reflow
+            pb.style.animation = 'toast-timer 3s linear forwards';
             
-            // Colores por tipo
-            const colors = { success: '#6366f1', error: '#f43f5e', info: '#3b82f6' };
-            toast.style.borderColor = colors[type];
-            
-            toast.classList.add('active');
             setTimeout(() => toast.classList.remove('active'), 3000);
           }
         };

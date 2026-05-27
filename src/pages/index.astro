@@ -6,16 +6,16 @@ import CategoryCard from '../components/CategoryCard.astro';
 const categories = [
   { id: "web-ai", title: "IAs de Páginas Web", description: "Crea sitios web completos y componentes de UI con solo describirlos.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M7 8h.01"/><path d="M11 8h.01"/><path d="M15 8h.01"/></svg>', href: "/paginas-web", color: "#06b6d4" },
   { id: "img-ai", title: "IAs de Imágenes", description: "Genera arte, fotos realistas e ilustraciones con prompts avanzados.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>', href: "/imagenes", color: "#f59e0b" },
-  { id: "study-ai", title: "IAs para Estudiar", description: "Mapas conceptuales, resúmenes y ayuda académica inteligente.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>', href: "/estudio", color: "#8b5cf6" },
   { id: "mc-plugins", title: "Plugins Minecraft", description: "Aprende a programar tus propios plugins desde cero con Java.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>', href: "/minecraft-plugins", color: "#22c55e" },
   { id: "cloud-infra", title: "Cloud & Infrastructure", description: "Domina AWS, Docker y despliegues profesionales en servidores VPS.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19c.7 0 1.3-.2 1.8-.7s.7-1.1.7-1.8c0-1.2-.8-2.2-2-2.5a4.5 4.5 0 0 0-8.5-1.5c-1.3.3-2.2 1.4-2.2 2.7 0 1.5 1 2.8 2.5 3"/><path d="M12 13v6"/><path d="m9 16 3 3 3-3"/></svg>', href: "/cloud-infra", color: "#38bdf8" },
   { id: "frontend-master", title: "Frontend Master", description: "Domina React, Next.js y animaciones premium para interfaces de élite.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>', href: "/frontend-master", color: "#6366f1" },
   { id: "ml-ai", title: "Machine Learning", description: "Entiende el cerebro de la IA. Modelos, redes neuronales y data science.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>', href: "/machine-learning", color: "#f43f5e" },
-  { id: "robust-dev", title: "Desarrollo Robusto", description: "Crea sitios web y aplicaciones móviles escalables y profesionales.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', href: "/desarrollo-robusto", color: "#3b82f6" },
-  { id: "pro-tools", title: "Herramientas Pro", description: "Domina Git, GitHub, LinkedIn y el ecosistema del programador.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>', href: "/herramientas-pro", color: "#f59e0b" },
   { id: "cyber-sec", title: "Ciberseguridad", description: "Protege tu código y tus servidores de ataques externos.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>', href: "/cyber-sec", color: "#ef4444" },
   { id: "python-auto", title: "Automatización Python", description: "Crea scripts y bots para automatizar tareas repetitivas.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"/></svg>', href: "/python-auto", color: "#10b981" },
-  { id: "ai-video", title: "IA para Video", description: "Generación y edición de video con herramientas de última generación.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="4" rx="2"/><path d="m22 7-8 5 8 5"/></svg>', href: "/ai-video", color: "#ec4899" }
+  { id: "ai-video", title: "IA para Video", description: "Generación y edición de video con herramientas de última generación.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="4" rx="2"/><path d="m22 7-8 5 8 5"/></svg>', href: "/ai-video", color: "#ec4899" },
+  { id: "robust-dev", title: "Desarrollo Robusto", description: "Crea sitios web y aplicaciones móviles escalables y profesionales.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', href: "/desarrollo-robusto", color: "#3b82f6" },
+  { id: "pro-tools", title: "Herramientas Pro", description: "Domina Git, GitHub, LinkedIn y el ecosistema del programador.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>', href: "/herramientas-pro", color: "#f59e0b" },
+  { id: "study-ai", title: "IAs para Estudiar", description: "Mapas conceptuales, resúmenes y ayuda académica inteligente.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>', href: "/estudio", color: "#8b5cf6" }
 ];
 ---
 
@@ -103,39 +103,37 @@ const categories = [
     </section>
   </main>
 
-  function updateLobby() {
-    const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
-    const badges = JSON.parse(localStorage.getItem('lacademy_badges') || '[]');
-    const total = 12;
+  <script>
+    function updateLobby() {
+      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+      const badges = JSON.parse(localStorage.getItem('lacademy_badges') || '[]');
+      const total = 12;
 
-    // Definir el orden secuencial de los cursos (IDs)
-    const courseOrder = [
-      "web-ai", "img-ai", "ai-video", "python-auto", 
-      "pro-tools", "frontend-master", "robust-dev", "cloud-infra",
-      "cyber-sec", "mc-plugins", "ml-ai", "study-ai"
-    ];
+      // Definir el orden secuencial de los cursos (IDs)
+      const courseOrder = [
+        "web-ai", "img-ai", "ai-video", "python-auto", 
+        "pro-tools", "frontend-master", "robust-dev", "cloud-infra",
+        "cyber-sec", "mc-plugins", "ml-ai", "study-ai"
+      ];
 
-    // Lógica de Bloqueo / Desbloqueo
-    courseOrder.forEach((id, index) => {
-      const card = document.getElementById(`card-${id}`);
-      if (card) {
-        // El primero siempre está abierto
-        if (index === 0) {
-          card.classList.remove('locked');
-        } else {
-          // El curso actual se desbloquea si el ANTERIOR está completado
-          const prevId = courseOrder[index - 1];
-          if (progress[prevId]) {
+      // Lógica de Bloqueo / Desbloqueo
+      courseOrder.forEach((id, index) => {
+        const card = document.getElementById(`card-${id}`);
+        if (card) {
+          if (index === 0) {
             card.classList.remove('locked');
           } else {
-            card.classList.add('locked');
+            const prevId = courseOrder[index - 1];
+            if (progress[prevId]) {
+              card.classList.remove('locked');
+            } else {
+              card.classList.add('locked');
+            }
           }
         }
-      }
-    });
+      });
 
-    const completed = Object.values(progress).filter(Boolean).length;
-  ...
+      const completed = Object.values(progress).filter(Boolean).length;
       const pct = Math.round((completed / total) * 100) || 0;
       const pb = document.getElementById('overall-pb');
       const txt = document.getElementById('progress-pct');
