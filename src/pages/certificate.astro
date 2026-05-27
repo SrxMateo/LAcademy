@@ -14,57 +14,121 @@ import Header from '../components/Header.astro';
 
     <section class="hero animate-fade">
       <h1>Tu <span class="gradient-text">Certificación Oficial</span></h1>
-      <p>Has completado el camino del desarrollador en LumaXCorp.</p>
+      <p>Reconocimiento a tu esfuerzo y dedicación en el ecosistema LumaX.</p>
     </section>
 
-    <div class="cert-viewer animate-fade">
-      <div id="certificate" class="certificate-card glass">
-        <div class="cert-border"></div>
+    <!-- Estado de Bloqueo -->
+    <div id="cert-locked" class="cert-lock-screen glass animate-fade">
+      <div class="lock-icon">🔒</div>
+      <h2>Certificado Bloqueado</h2>
+      <p>Debes completar al menos el <strong>50% de la academia</strong> para generar tu certificado profesional.</p>
+      <div class="lock-progress-container">
+        <div class="lock-progress-bar" id="lock-pb"></div>
+      </div>
+      <span id="lock-status-txt">0/12 Cursos completados</span>
+      <a href="/" class="btn-primary" style="margin-top: 2rem;">Seguir Estudiando</a>
+    </div>
+
+    <!-- Visualizador de Certificado (Solo visible si está desbloqueado) -->
+    <div id="cert-unlocked" class="cert-viewer animate-fade hidden">
+      <div id="certificate" class="certificate-card">
+        <div class="cert-inner-border"></div>
+        <div class="cert-corner tl"></div>
+        <div class="cert-corner tr"></div>
+        <div class="cert-corner bl"></div>
+        <div class="cert-corner br"></div>
+        
         <div class="cert-content">
           <div class="cert-header">
-            <span class="l">L</span>-Academy
-            <p>LumaxCorp Certified Program</p>
+            <div class="luma-seal">LX</div>
+            <div class="academy-brand">
+              <span class="l">L</span>-Academy
+              <p>PROGRAMA DE ÉLITE TECNOLÓGICA</p>
+            </div>
           </div>
-          <h2>CERTIFICADO DE EXCELENCIA</h2>
-          <p class="cert-text">Se otorga el presente reconocimiento a:</p>
-          <h3 id="cert-user-name">TU NOMBRE AQUÍ</h3>
-          <p class="cert-desc">Por haber completado con éxito todos los módulos de Inteligencia Artificial, Desarrollo Web Robusto y Programación de Plugins en la plataforma L-Academy.</p>
+
+          <div class="cert-body">
+            <span class="cert-subtitle">DIPLOMA DE EXCELENCIA TÉCNICA</span>
+            <p class="award-text">Se otorga con orgullo a:</p>
+            <h3 id="cert-user-name">TU NOMBRE AQUÍ</h3>
+            <div class="divider-gold"></div>
+            <p class="cert-desc">
+              Por haber demostrado dominio avanzado en el desarrollo de software, inteligencia artificial aplicada y arquitectura de sistemas dentro del ecosistema de aprendizaje <strong>LumaXStudio</strong>.
+            </p>
+          </div>
+
           <div class="cert-footer">
-            <div class="signature">
+            <div class="signature-box">
+              <img src="https://img.icons8.com/ios/100/6366f1/signature.png" alt="Firma" class="sig-img" />
               <div class="sig-line"></div>
               <p>SrxMateo</p>
-              <span>Founder of LumaXCorp</span>
+              <span>Fundador de LumaXCorp</span>
             </div>
-            <div class="cert-id">
-              <p>ID de Certificación:</p>
-              <span id="cert-id-num">LMX-2026-XXXX</span>
+            
+            <div class="verify-box">
+              <div class="qr-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+              </div>
+              <div class="verify-text">
+                <p>ID: <span id="cert-id-num">LMX-2026-XXXX</span></p>
+                <span>Verificar en: lumax.lat/verify</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="cert-actions glass">
-        <h3>Personaliza tu Certificado</h3>
-        <input type="text" id="user-name-input" placeholder="Escribe tu nombre completo" />
-        <button id="btn-download-cert" class="btn-3d">Descargar como Imagen</button>
-        <button onclick="window.print()" class="btn-secondary">Imprimir PDF</button>
+        <h3>Prepara tu Título</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Introduce tu nombre tal como quieres que aparezca.</p>
+        <input type="text" id="user-name-input" placeholder="Nombre y Apellidos" maxlength="30" />
+        <button id="btn-download-cert" class="btn-3d">Descargar Imagen (HD)</button>
+        <button onclick="window.print()" class="btn-secondary">Imprimir Diploma</button>
+        <div class="cert-info-tip">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Este certificado es válido para tu currículum profesional.
+        </div>
       </div>
     </div>
   </main>
 
   <script>
     function setupCert() {
-      const nameInput = document.getElementById('user-name-input') as HTMLInputElement;
-      const certName = document.getElementById('cert-user-name');
-      const certID = document.getElementById('cert-id-num');
+      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+      const total = 12;
+      const completed = Object.values(progress).filter(Boolean).length;
+      const pct = (completed / total) * 100;
 
-      nameInput?.addEventListener('input', () => {
-        if (certName) certName.textContent = nameInput.value.toUpperCase() || 'TU NOMBRE AQUÍ';
-      });
+      const lockedScreen = document.getElementById('cert-locked');
+      const unlockedScreen = document.getElementById('cert-unlocked');
+      const lockPb = document.getElementById('lock-pb');
+      const lockTxt = document.getElementById('lock-status-txt');
 
-      if (certID) {
-        const rand = Math.floor(Math.random() * 9000) + 1000;
-        certID.textContent = `LMX-2026-${rand}`;
+      if (pct >= 50) {
+        lockedScreen?.classList.add('hidden');
+        unlockedScreen?.classList.remove('hidden');
+        
+        // Lógica de personalización
+        const nameInput = document.getElementById('user-name-input') as HTMLInputElement;
+        const certName = document.getElementById('cert-user-name');
+        const certID = document.getElementById('cert-id-num');
+
+        nameInput?.addEventListener('input', () => {
+          if (certName) certName.textContent = nameInput.value.toUpperCase() || 'TU NOMBRE AQUÍ';
+        });
+
+        if (certID) {
+          const rand = Math.floor(Math.random() * 90000) + 10000;
+          certID.textContent = `LMX-26-${rand}`;
+        }
+
+        // Logro por graduarse (50%)
+        if (window.unlockAchievement) {
+          window.unlockAchievement('certified-dev', 'Profesional Certificado', '🎓', 1000);
+        }
+      } else {
+        if (lockPb) lockPb.style.width = `${pct}%`;
+        if (lockTxt) lockTxt.textContent = `${completed}/12 Cursos completados (${Math.round(pct)}%)`;
       }
     }
 
@@ -74,37 +138,82 @@ import Header from '../components/Header.astro';
 </BaseLayout>
 
 <style>
-  .hero { text-align: center; padding: 3rem 0; }
-  .cert-viewer { display: grid; grid-template-columns: 1fr 350px; gap: 3rem; margin-bottom: 6rem; align-items: start; }
+  .hero { text-align: center; padding: 4rem 0; }
+  .hidden { display: none !important; }
+
+  /* Pantalla de Bloqueo */
+  .cert-lock-screen { text-align: center; padding: 5rem; border-radius: 3rem; max-width: 600px; margin: 0 auto 6rem; border: 2px dashed var(--border); }
+  .lock-icon { font-size: 4rem; margin-bottom: 2rem; filter: drop-shadow(0 0 20px var(--primary)); }
+  .lock-progress-container { width: 100%; height: 12px; background: rgba(255,255,255,0.05); border-radius: 99px; margin: 2rem 0 1rem; overflow: hidden; }
+  .lock-progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 1s ease; }
+  #lock-status-txt { font-size: 0.9rem; color: var(--text-muted); font-weight: 700; }
+
+  /* Certificado Premium */
+  .cert-viewer { display: grid; grid-template-columns: 1fr 380px; gap: 3rem; margin-bottom: 8rem; align-items: start; }
   
-  .certificate-card { padding: 4rem; border-radius: 0.5rem; position: relative; aspect-ratio: 1.414/1; display: flex; flex-direction: column; align-items: center; text-align: center; background: #fff; color: #000; border: 15px solid #0f172a; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-  .cert-border { position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 2px solid #f59e0b; pointer-events: none; }
+  .certificate-card { 
+    padding: 5rem; 
+    border-radius: 0.2rem; 
+    position: relative; 
+    aspect-ratio: 1.414/1; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    text-align: center; 
+    background: #fdfdfb; 
+    color: #1a1a1a; 
+    border: 2px solid #d4af37;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.4);
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 70%),
+      url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+  }
+
+  .cert-inner-border { position: absolute; top: 1.5rem; left: 1.5rem; right: 1.5rem; bottom: 1.5rem; border: 1px solid #d4af37; pointer-events: none; }
+  .cert-corner { position: absolute; width: 60px; height: 60px; border: 4px solid #d4af37; }
+  .tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+  .tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+  .bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+  .br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+  .cert-header { display: flex; align-items: center; gap: 2rem; margin-bottom: 3rem; }
+  .luma-seal { width: 80px; height: 80px; background: #1a1a1a; color: #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.8rem; border: 4px double #d4af37; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+  .academy-brand { text-align: left; }
+  .academy-brand .l { color: #6366f1; font-size: 2.5rem; font-weight: 900; }
+  .academy-brand p { font-size: 0.75rem; letter-spacing: 0.3em; margin-top: -5px; font-weight: 800; color: #666; }
+
+  .cert-subtitle { font-weight: 800; letter-spacing: 0.4em; color: #d4af37; font-size: 0.9rem; display: block; margin-bottom: 2rem; }
+  .award-text { font-style: italic; font-size: 1.2rem; font-family: 'Georgia', serif; margin-bottom: 1rem; color: #444; }
   
-  .cert-header { margin-bottom: 2rem; }
-  .cert-header .l { color: var(--primary); font-size: 2.5rem; font-weight: 900; }
-  .cert-header p { font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; margin-top: -5px; }
+  h3#cert-user-name { font-size: 3.5rem; font-family: 'Playfair Display', serif; margin-bottom: 1.5rem; color: #1a1a1a; letter-spacing: -0.02em; }
+  .divider-gold { width: 300px; height: 2px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin: 0 auto 2.5rem; }
+  .cert-desc { max-width: 85%; line-height: 1.8; font-size: 1.05rem; margin: 0 auto 4rem; color: #333; }
 
-  h2 { font-size: 2.5rem; margin-bottom: 1.5rem; letter-spacing: 0.1em; color: #0f172a; }
-  .cert-text { font-style: italic; margin-bottom: 1rem; }
-  h3#cert-user-name { font-size: 3rem; font-family: 'Times New Roman', serif; margin-bottom: 2rem; border-bottom: 2px solid #000; display: inline-block; padding: 0 2rem; }
-  .cert-desc { max-width: 80%; line-height: 1.6; font-size: 1.1rem; margin-bottom: 3rem; }
+  .cert-footer { display: flex; justify-content: space-between; width: 100%; margin-top: auto; align-items: flex-end; padding: 0 1rem; }
+  .signature-box { text-align: center; }
+  .sig-img { width: 120px; margin-bottom: -10px; opacity: 0.8; }
+  .sig-line { width: 180px; height: 1px; background: #333; margin-bottom: 0.5rem; }
+  .signature-box p { font-weight: 800; font-size: 1rem; margin: 0; }
+  .signature-box span { font-size: 0.7rem; text-transform: uppercase; color: #777; }
 
-  .cert-footer { display: flex; justify-content: space-between; width: 100%; margin-top: auto; align-items: flex-end; }
-  .signature { text-align: center; }
-  .sig-line { width: 200px; height: 1px; background: #000; margin-bottom: 0.5rem; }
-  .cert-id { text-align: right; font-size: 0.8rem; }
-  .cert-id span { font-weight: 700; color: var(--primary); }
+  .verify-box { display: flex; align-items: center; gap: 1.5rem; text-align: left; }
+  .qr-placeholder { padding: 0.5rem; border: 1px solid #ddd; background: #fff; border-radius: 0.5rem; color: #1a1a1a; }
+  .verify-text p { font-size: 0.8rem; font-weight: 800; margin: 0; }
+  .verify-text span { font-size: 0.65rem; color: #777; }
 
-  .cert-actions { padding: 2.5rem; border-radius: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
-  .cert-actions input { background: var(--background); border: 1px solid var(--border); padding: 1rem; border-radius: 1rem; color: var(--text); font-size: 1rem; }
+  .cert-actions { padding: 3rem; border-radius: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 100px; }
+  .cert-actions input { background: var(--background); border: 2px solid var(--border); padding: 1.2rem; border-radius: 1rem; color: var(--text); font-size: 1.1rem; font-weight: 600; outline: none; transition: border-color 0.3s; }
+  .cert-actions input:focus { border-color: var(--primary); }
+  .cert-info-tip { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; color: var(--text-muted); background: rgba(99, 102, 241, 0.05); padding: 1rem; border-radius: 0.75rem; line-height: 1.4; }
 
   @media print {
-    .btn-back, header, .cert-actions, .hero, .ai-tutor-container { display: none !important; }
-    .certificate-card { box-shadow: none; border: 10px solid #000; width: 100%; height: auto; position: absolute; top: 0; left: 0; }
+    .btn-back, header, .cert-actions, .hero, .ai-tutor-container, .luma-console, .achievement-toast { display: none !important; }
+    body { background: #fff !important; }
+    .certificate-card { box-shadow: none; border: 1px solid #d4af37; width: 100%; height: auto; position: fixed; top: 0; left: 0; margin: 0; padding: 3rem; }
   }
 
   @media (max-width: 1100px) {
     .cert-viewer { grid-template-columns: 1fr; }
-    .certificate-card { width: 100%; height: auto; }
+    .cert-actions { position: static; }
   }
 </style>
