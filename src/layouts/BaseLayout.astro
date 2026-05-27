@@ -5,6 +5,7 @@ import { ViewTransitions } from 'astro:transitions';
 declare global {
   interface Window {
     unlockAchievement: (id: string, name: string, icon: string, xp: number) => void;
+    notify: (message: string, icon?: string, type?: 'success' | 'error' | 'info') => void;
   }
 }
 
@@ -47,6 +48,29 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
 			});
 		</script>
 		<style is:global>
+      /* Luma Toast */
+      .luma-toast {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: rgba(10, 10, 15, 0.95);
+        border: 1px solid var(--primary);
+        padding: 0.75rem 1.5rem;
+        border-radius: 99px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        z-index: 10001;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        opacity: 0;
+        pointer-events: none;
+      }
+      .luma-toast.active { transform: translateX(-50%) translateY(0); opacity: 1; }
+      .toast-icon { font-size: 1.2rem; }
+      .toast-content p { margin: 0; font-size: 0.9rem; font-weight: 600; color: #fff; white-space: nowrap; }
+
       /* Notificaciones de Logros */
       .achievement-toast {
         position: fixed;
@@ -187,6 +211,14 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
           <div style="color:var(--primary); font-weight:bold;">Welcome to LumaOS v2.0.0 (Astro-Kernel)</div>
           <div style="font-size:0.7rem; opacity:0.5; margin-bottom:1rem;">Type 'help' to see available commands. Press Esc to close.</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Luma Toast Notification -->
+    <div id="luma-toast" class="luma-toast">
+      <div class="toast-icon" id="toast-icon">✨</div>
+      <div class="toast-content">
+        <p id="toast-message">Mensaje de notificación</p>
       </div>
     </div>
 
@@ -415,12 +447,33 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
         }
       }
 
+      function setupNotifications() {
+        const toast = document.getElementById('luma-toast');
+        const messageEl = document.getElementById('toast-message');
+        const iconEl = document.getElementById('toast-icon');
+
+        window.notify = (message: string, icon: string = '✨', type: 'success' | 'error' | 'info' = 'success') => {
+          if (toast && messageEl && iconEl) {
+            messageEl.textContent = message;
+            iconEl.textContent = icon;
+            
+            // Colores por tipo
+            const colors = { success: '#6366f1', error: '#f43f5e', info: '#3b82f6' };
+            toast.style.borderColor = colors[type];
+            
+            toast.classList.add('active');
+            setTimeout(() => toast.classList.remove('active'), 3000);
+          }
+        };
+      }
+
 			// Run on first load
 			applyTheme();
       setupAITutor();
       setupParticles();
       setupConsole();
       setupAchievements();
+      setupNotifications();
 
 			// Run on every view transition
 			document.addEventListener('astro:after-swap', () => {
@@ -429,6 +482,7 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
         setupParticles();
         setupConsole();
         setupAchievements();
+        setupNotifications();
       });
 
       function setupParticles() {
