@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const items = [
+  {
+    id: "art-1",
+    title: "Cyberpunk Luma",
+    creator: "User_42",
+    type: "AI Art",
+    image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=600&auto=format&fit=crop",
+    likes: 124
+  },
+  {
+    id: "art-2",
+    title: "Astro Landing Page",
+    creator: "WebDev_Pro",
+    type: "Website",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop",
+    likes: 89
+  },
+  {
+    id: "art-3",
+    title: "Magic Particle Plugin",
+    creator: "MC_Coder",
+    type: "Minecraft Plugin",
+    image: "https://images.unsplash.com/photo-1587573089734-09cb69c0f2b4?q=80&w=600&auto=format&fit=crop",
+    likes: 256
+  }
+];
+---
+
+<BaseLayout title="Galería de la Comunidad">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Galería de la <span class="gradient-text">Comunidad</span></h1>
+      <p>Inspírate con las creaciones de otros miembros y comparte tus propios logros.</p>
+      
+      <div class="upload-section glass">
+        <h3>Subir mi Creación</h3>
+        <p class="upload-info">Las imágenes se comprimirán automáticamente para ahorrar espacio en la VPS.</p>
+        <form id="upload-form" class="upload-form">
+          <input type="file" id="file-input" accept="image/*" required />
+          <input type="text" id="title-input" placeholder="Título de la obra" required />
+          <button type="submit" class="btn-3d" id="submit-upload">Publicar en la VPS</button>
+        </form>
+        <div id="upload-status"></div>
+      </div>
+    </section>
+
+    <div class="gallery-grid animate-fade" id="gallery-container">
+      {items.map(item => (
+        <div class="gallery-card glass">
+          <div class="gallery-img" style={`background-image: url(${item.image})`}></div>
+          <div class="gallery-info">
+            <span class="type-tag">{item.type}</span>
+            <h3>{item.title}</h3>
+            <p>por <strong>{item.creator}</strong></p>
+            <div class="gallery-actions">
+              <button class="btn-like" data-id={item.id}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span id={`likes-${item.id}`}>{item.likes}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </main>
+
+  <script>
+    function setupGallery() {
+      const likes = JSON.parse(localStorage.getItem('lacademy_likes') || '[]');
+      const uploadForm = document.getElementById('upload-form') as HTMLFormElement;
+      const statusDiv = document.getElementById('upload-status');
+      
+      // Handle Likes
+      document.querySelectorAll('.btn-like').forEach(btn => {
+        const id = btn.getAttribute('data-id') || '';
+        const countSpan = document.getElementById(`likes-${id}`);
+        
+        if (likes.includes(id)) {
+          btn.classList.add('active');
+        }
+
+        btn.addEventListener('click', () => {
+          if (likes.includes(id)) {
+            likes.splice(likes.indexOf(id), 1);
+            btn.classList.remove('active');
+            if (countSpan) countSpan.textContent = (parseInt(countSpan.textContent || '0') - 1).toString();
+          } else {
+            likes.push(id);
+            btn.classList.add('active');
+            if (countSpan) countSpan.textContent = (parseInt(countSpan.textContent || '0') + 1).toString();
+          }
+          localStorage.setItem('lacademy_likes', JSON.stringify(likes));
+        });
+      });
+
+      // Handle Real Upload to VPS
+      uploadForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById('file-input') as HTMLInputElement;
+        const titleInput = document.getElementById('title-input') as HTMLInputElement;
+        const submitBtn = document.getElementById('submit-upload') as HTMLButtonElement;
+
+        if (!fileInput.files?.[0]) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Procesando y Comprimiendo...';
+
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]);
+        formData.append('title', titleInput.value);
+
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            if (statusDiv) statusDiv.innerHTML = `<p style="color: var(--success)">¡Imagen subida con éxito a la VPS! (Ruta: ${data.url})</p>`;
+            alert('Imagen guardada y comprimida en la VPS correctamente.');
+            uploadForm.reset();
+          } else {
+            throw new Error(data.error);
+          }
+        } catch (err: any) {
+          if (statusDiv) statusDiv.innerHTML = `<p style="color: #ef4444">Error: ${err.message}</p>`;
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Publicar en la VPS';
+        }
+      });
+    }
+
+    setupGallery();
+    document.addEventListener('astro:after-swap', setupGallery);
+  </script>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 4rem 0; }
+  .upload-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    max-width: 600px;
+    margin-inline: auto;
+    border-radius: 1.5rem;
+    text-align: left;
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+  .upload-section h3 { margin-bottom: 0.5rem; color: var(--primary); }
+  .upload-info { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .upload-form { display: flex; flex-direction: column; gap: 1rem; }
+  .upload-form input {
+    background: var(--background);
+    border: 1px solid var(--border);
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    color: var(--text);
+  }
+  #upload-status { margin-top: 1rem; font-size: 0.9rem; }
+
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-bottom: 6rem; }
+  
+  .gallery-card { border-radius: 2rem; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s; }
+  .gallery-card:hover { transform: translateY(-10px); }
+  
+  .gallery-img { height: 250px; background-size: cover; background-position: center; }
+  
+  .gallery-info { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; gap: 0.75rem; }
+  .type-tag { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; }
+  .gallery-info h3 { font-size: 1.4rem; color: var(--text); }
+  .gallery-info p { color: var(--text-muted); font-size: 0.9rem; }
+  
+  .gallery-actions { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .btn-like { background: none; border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 0.75rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+  .btn-like:hover { border-color: #ef4444; color: #ef4444; }
+  .btn-like.active { background: #ef4444; color: white; border-color: #ef4444; }
+  .btn-like svg { fill: transparent; }
+  .btn-like.active svg { fill: white; }
+</style>

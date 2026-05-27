@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const resources = [
+  {
+    title: "Cheat Sheet: Prompt Engineering",
+    description: "Una guía rápida con los modificadores más potentes para ChatGPT y Claude.",
+    icon: "📄",
+    link: "#",
+    category: "PDF"
+  },
+  {
+    title: "Lista de Comandos Linux Pro",
+    description: "Domina la terminal con los comandos esenciales para administrar servidores.",
+    icon: "💻",
+    link: "#",
+    category: "Markdown"
+  },
+  {
+    title: "Plantilla de plugin.yml",
+    description: "Estructura base lista para copiar y pegar en tus proyectos de Minecraft.",
+    icon: "📦",
+    link: "#",
+    category: "Code"
+  },
+  {
+    title: "Guía Visual: Git Flow",
+    description: "Aprende a gestionar ramas y colaboraciones sin perderte.",
+    icon: "🌳",
+    link: "#",
+    category: "Image"
+  }
+];
+---
+
+<BaseLayout title="Biblioteca de Recursos">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Biblioteca de <span class="gradient-text">Recursos</span></h1>
+      <p>Material descargable y guías rápidas para potenciar tu flujo de trabajo diario.</p>
+    </section>
+
+    <div class="resources-grid animate-fade" style="animation-delay: 0.1s;">
+      {resources.map(res => (
+        <div class="res-card glass">
+          <div class="res-icon">{res.icon}</div>
+          <div class="res-content">
+            <span class="res-cat">{res.category}</span>
+            <h3>{res.title}</h3>
+            <p>{res.description}</p>
+            <a href={res.link} class="btn-primary" style="margin-top: 1rem;">Descargar</a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 4rem 0; }
+  .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 5rem; }
+  .res-card { padding: 2rem; border-radius: 1.5rem; display: flex; gap: 1.5rem; transition: transform 0.3s; }
+  .res-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+  .res-icon { font-size: 2.5rem; display: flex; align-items: center; justify-content: center; }
+  .res-cat { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+  .res-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+  .res-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+</style>

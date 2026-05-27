@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const sections = [
+  {
+    title: "🚀 Desarrollo Web de Alto Rendimiento",
+    description: "Para que una web sea robusta, debe cargar en menos de 1 segundo, ser accesible y tener un SEO impecable.",
+    topics: [
+      { name: "Frameworks SSR/SSG", detail: "Usa Astro para sitios de contenido o Next.js para aplicaciones dinámicas complejas." },
+      { name: "Bases de Datos Escalables", detail: "Domina PostgreSQL con Supabase o MongoDB para datos no estructurados." },
+      { name: "Seguridad Web", detail: "Implementa JWT, OAuth2 y protección contra ataques XSS y CSRF." }
+    ]
+  },
+  {
+    title: "📱 Apps Móviles Nativas y Cross-Platform",
+    description: "El mundo es móvil. Aprende a crear aplicaciones que se sientan fluidas y potentes en cualquier dispositivo.",
+    topics: [
+      { name: "Flutter Mastery", detail: "Crea interfaces de usuario hermosas a 120fps con Dart." },
+      { name: "React Native", detail: "Aprovecha el ecosistema de React para dominar iOS y Android simultáneamente." },
+      { name: "App Store Optimization", detail: "No solo programes, aprende a publicar y posicionar tu app en las tiendas." }
+    ]
+  },
+  {
+    title: "🏗️ DevOps y Escalabilidad Profesional",
+    description: "Un senior sabe cómo mantener la aplicación viva. La infraestructura es tan importante como el código.",
+    topics: [
+      { name: "Docker & Kubernetes", detail: "Contenedoriza tu app para que funcione igual en tu PC y en el servidor." },
+      { name: "CI/CD Pipelines", detail: "Usa GitHub Actions para automatizar tus tests y despliegues sin errores humanos." },
+      { name: "Cloud Providers", detail: "Domina AWS, Google Cloud o Vercel para escalar a millones de usuarios." }
+    ]
+  }
+];
+
+const roadmap = [
+  { level: "Junior", focus: "Sintaxis, HTML/CSS, Git básico, Lógica de programación." },
+  { level: "Mid", focus: "Frameworks, APIs, Bases de datos, Clean Code, Testing unitario." },
+  { level: "Senior", focus: "Arquitectura, DevOps, Liderazgo técnico, Escalabilidad, Seguridad avanzada." }
+];
+---
+
+<BaseLayout title="Desarrollo Robusto">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Arquitectura y <span class="gradient-text">Software Robusto</span></h1>
+      <p>Deja de hacer tutoriales y empieza a construir sistemas reales. Aprende las metodologías y herramientas que utilizan las empresas de Silicon Valley.</p>
+    </section>
+
+    <div class="robust-grid animate-fade" style="animation-delay: 0.1s;">
+      {sections.map(section => (
+        <div class="robust-card glass">
+          <div class="card-header">
+            <h2>{section.title}</h2>
+            <p>{section.description}</p>
+          </div>
+          <div class="topics-list">
+            {section.topics.map(topic => (
+              <div class="topic-box">
+                <div class="topic-head">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <h4>{topic.name}</h4>
+                </div>
+                <p>{topic.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <section class="career-path animate-fade" style="animation-delay: 0.2s;">
+      <div class="path-card glass">
+        <h2>El Camino hacia el Seniority</h2>
+        <div class="path-steps">
+          {roadmap.map(item => (
+            <div class="path-item">
+              <div class="path-level">{item.level}</div>
+              <div class="path-content">
+                <p>{item.focus}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+    <div class="complete-box animate-fade">
+      <button class="btn-3d btn-complete" data-category="robust-dev">Marcar como Completado</button>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  function setupCompletion() {
+    const btn = document.querySelector('.btn-complete');
+    const cat = btn?.getAttribute('data-category');
+    if (btn && cat) {
+      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+      if (progress[cat]) btn.textContent = '✅ Lección Completada';
+
+      btn.addEventListener('click', () => {
+        progress[cat] = true;
+        localStorage.setItem('lacademy_progress', JSON.stringify(progress));
+        btn.textContent = '✅ Lección Completada';
+
+        const xp = parseInt(localStorage.getItem('lacademy_xp') || '0');
+        localStorage.setItem('lacademy_xp', (xp + 500).toString());
+
+        alert('¡Progreso guardado! Revisa el lobby para ver tu avance.');
+      });
+    }
+  }
+  setupCompletion();
+  document.addEventListener('astro:after-swap', setupCompletion);
+</script>
+
+<style>
+  .complete-box { margin: 4rem 0; text-align: center; }
+  .hero { text-align: center; padding: 4rem 0; max-width: 800px; margin: 0 auto; }
+  .hero p { color: var(--text-muted); font-size: 1.1rem; margin-top: 1rem; }
+
+  .robust-grid { display: flex; flex-direction: column; gap: 4rem; margin-bottom: 5rem; }
+  .robust-card { padding: 4rem; border-radius: 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+  
+  .card-header h2 { font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--primary); line-height: 1.2; }
+  .card-header p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; }
+
+  .topics-list { display: flex; flex-direction: column; gap: 2rem; }
+  .topic-box { background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 1.5rem; border: 1px solid var(--border); transition: all 0.3s; }
+  .topic-box:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); transform: translateX(10px); }
+  
+  .topic-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+  .topic-head h4 { font-size: 1.2rem; color: var(--text); }
+  .topic-box p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+  .career-path { margin-bottom: 6rem; }
+  .path-card { padding: 4rem; border-radius: 2.5rem; text-align: center; }
+  .path-card h2 { font-size: 2.5rem; margin-bottom: 4rem; }
+  .path-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+  
+  .path-item { background: var(--background); padding: 2.5rem; border-radius: 2rem; border: 1px solid var(--border); position: relative; }
+  .path-level { position: absolute; top: -1rem; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 0.4rem 1.5rem; border-radius: 999px; font-weight: 800; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+  .path-content p { color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; }
+
+  @media (max-width: 1024px) {
+    .robust-card { grid-template-columns: 1fr; gap: 2.5rem; padding: 2.5rem; }
+  }
+</style>

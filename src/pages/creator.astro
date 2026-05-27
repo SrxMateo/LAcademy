@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+---
+
+<BaseLayout title="Creador de Plantillas">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Creador de <span class="gradient-text">Plantillas Pro</span></h1>
+      <p>Construye tu prompt maestro estructurado paso a paso y descárgalo como una ficha técnica.</p>
+    </section>
+
+    <div class="creator-grid animate-fade">
+      <div class="editor-side glass">
+        <div class="input-group">
+          <label>Rol del Asistente</label>
+          <input type="text" id="p-role" placeholder="Ej: Experto en Java Senior..." />
+        </div>
+        <div class="input-group">
+          <label>Contexto del Proyecto</label>
+          <textarea id="p-context" placeholder="Explica qué estás construyendo..."></textarea>
+        </div>
+        <div class="input-group">
+          <label>Tarea Específica</label>
+          <textarea id="p-task" placeholder="¿Qué quieres que la IA haga exactamente?"></textarea>
+        </div>
+        <div class="input-group">
+          <label>Restricciones / Formato</label>
+          <input type="text" id="p-format" placeholder="Ej: JSON, Código limpio, Explicación paso a paso..." />
+        </div>
+      </div>
+
+      <div class="preview-side glass">
+        <h3>Vista Previa del Prompt</h3>
+        <div id="prompt-preview" class="prompt-preview">
+          Escribe en los campos de la izquierda para ver tu prompt maestro aquí...
+        </div>
+        
+        <div id="analyzer-results" class="analyzer-box hidden">
+          <div class="score-header">
+            <span>Puntuación IA</span>
+            <strong id="p-score">0/10</strong>
+          </div>
+          <p id="p-feedback">Analizando calidad del prompt...</p>
+        </div>
+
+        <div class="preview-actions">
+          <button id="btn-analyze" class="btn-secondary">Analizar Calidad</button>
+          <button id="copy-custom" class="btn-primary">Copiar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function setupCreator() {
+      const role = document.getElementById('p-role') as HTMLInputElement;
+      const context = document.getElementById('p-context') as HTMLTextAreaElement;
+      const task = document.getElementById('p-task') as HTMLTextAreaElement;
+      const format = document.getElementById('p-format') as HTMLInputElement;
+      const preview = document.getElementById('prompt-preview');
+
+      function updatePreview() {
+        if (!preview) return;
+        const text = `
+ROL: ${role?.value || '[Sin Rol]'}
+CONTEXTO: ${context?.value || '[Sin Contexto]'}
+TAREA: ${task?.value || '[Sin Tarea]'}
+FORMATO: ${format?.value || '[Sin Formato]'}
+        `.trim();
+        preview.textContent = text;
+      }
+
+      [role, context, task, format].forEach(el => {
+        el?.addEventListener('input', updatePreview);
+      });
+
+      document.getElementById('copy-custom')?.addEventListener('click', () => {
+        navigator.clipboard.writeText(preview?.textContent || '');
+        alert('Prompt copiado!');
+      });
+
+      document.getElementById('download-txt')?.addEventListener('click', () => {
+        const text = preview?.textContent || '';
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'prompt-maestro.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      // Prompt Analyzer Logic
+      document.getElementById('btn-analyze')?.addEventListener('click', () => {
+        const results = document.getElementById('analyzer-results');
+        const score = document.getElementById('p-score');
+        const feedback = document.getElementById('p-feedback');
+        
+        results?.classList.remove('hidden');
+        
+        let pts = 0;
+        if (role.value.length > 5) pts += 3;
+        if (context.value.length > 20) pts += 3;
+        if (task.value.length > 10) pts += 4;
+
+        if (score) score.textContent = `${pts}/10`;
+        
+        if (pts < 5) feedback!.textContent = "Prompt muy vago. Añade más contexto y especifica el rol.";
+        else if (pts < 9) feedback!.textContent = "¡Buen trabajo! Es un prompt sólido, pero podrías detallar más el formato de salida.";
+        else feedback!.textContent = "¡Excelente! Este prompt sacará lo mejor de cualquier LLM.";
+      });
+    }
+
+    setupCreator();
+    document.addEventListener('astro:after-swap', setupCreator);
+  </script>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 4rem 0; }
+  .analyzer-box { background: var(--card); border: 1px solid var(--primary); padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem; border-left: 5px solid var(--primary); transition: all 0.3s; }
+  .analyzer-box.hidden { display: none; }
+  .score-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: 800; font-size: 0.9rem; }
+  #p-feedback { font-size: 0.85rem; font-style: italic; color: var(--text-muted); }
+
+  .creator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 6rem; align-items: start; }
+  
+  .editor-side { padding: 3rem; border-radius: 2rem; display: flex; flex-direction: column; gap: 2rem; }
+  .input-group { display: flex; flex-direction: column; gap: 0.75rem; }
+  .input-group label { font-weight: 800; font-size: 0.9rem; text-transform: uppercase; color: var(--primary); }
+  .input-group input, .input-group textarea { background: var(--background); border: 1px solid var(--border); padding: 1rem; border-radius: 1rem; color: var(--text); font-family: inherit; outline: none; }
+  .input-group input:focus, .input-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+  .input-group textarea { height: 120px; resize: vertical; }
+
+  .preview-side { padding: 3rem; border-radius: 2rem; border: 2px dashed var(--primary); background: rgba(99, 102, 241, 0.02); position: sticky; top: 100px; }
+  .prompt-preview { background: var(--background); padding: 2rem; border-radius: 1.5rem; margin: 1.5rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; white-space: pre-wrap; min-height: 200px; border: 1px solid var(--border); }
+  
+  .preview-actions { display: flex; gap: 1rem; }
+  .preview-actions button { flex: 1; justify-content: center; }
+
+  @media (max-width: 900px) {
+    .creator-grid { grid-template-columns: 1fr; }
+    .preview-side { position: static; }
+  }
+</style>

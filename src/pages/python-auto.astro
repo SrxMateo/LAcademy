@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const scripts = [
+  { name: "Web Scraper", d: "Extrae datos de cualquier página web automáticamente." },
+  { name: "Bot de Discord", d: "Crea tu propio asistente para gestionar tu comunidad." },
+  { name: "Auto-archiver", d: "Organiza tus archivos y carpetas de la VPS sin mover un dedo." }
+];
+---
+
+<BaseLayout title="Automatización Python">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Automatización con <span class="gradient-text">Python</span></h1>
+      <p>Deja que el código trabaje por ti. Aprende a crear herramientas que ahorran horas de trabajo manual.</p>
+    </section>
+
+    <div class="python-grid animate-fade">
+      {scripts.map(s => (
+        <div class="script-card glass">
+          <h3>{s.name}</h3>
+          <p>{s.d}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="complete-box animate-fade">
+      <button class="btn-3d btn-complete" data-category="python-auto">Marcar como Completado</button>
+    </div>
+  </main>
+
+  <script>
+    function setupCompletion() {
+      const btn = document.querySelector('.btn-complete');
+      const cat = btn?.getAttribute('data-category');
+      if (btn && cat) {
+        const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+        if (progress[cat]) btn.textContent = '✅ Lección Completada';
+
+        btn.addEventListener('click', () => {
+          progress[cat] = true;
+          const xp = parseInt(localStorage.getItem('lacademy_xp') || '0');
+          localStorage.setItem('lacademy_xp', (xp + 500).toString());
+          localStorage.setItem('lacademy_progress', JSON.stringify(progress));
+          btn.textContent = '✅ Lección Completada';
+          alert('¡Progreso guardado! Ahora eres un maestro de la automatización.');
+        });
+      }
+    }
+    setupCompletion();
+    document.addEventListener('astro:after-swap', setupCompletion);
+  </script>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 4rem 0; }
+  .python-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+  .script-card { padding: 2.5rem; border-radius: 2rem; border-left: 5px solid #10b981; }
+  .script-card h3 { color: #10b981; margin-bottom: 1rem; }
+  .complete-box { margin: 4rem 0; text-align: center; }
+</style>

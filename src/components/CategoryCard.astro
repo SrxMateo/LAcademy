@@ -1,0 +1,100 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  href: string;
+  color?: string;
+}
+
+const { id, title, description, icon, href, color = 'var(--primary)' } = Astro.props;
+---
+<a href={href} class="card glass" data-category-id={id}>
+  <div class="icon-wrapper" style={`--icon-color: ${color}`}>
+    <Fragment set:html={icon} />
+  </div>
+  <div class="content">
+    <h3>{title}</h3>
+    <p>{description}</p>
+    <div class="progress-container">
+      <div class="progress-bar" id={`pb-${id}`}></div>
+    </div>
+  </div>
+  <div class="arrow">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </div>
+</a>
+
+<script define:vars={{ id }}>
+  const updateProgress = () => {
+    const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+    const bar = document.getElementById(`pb-${id}`);
+    if (bar && progress[id]) {
+      bar.style.width = '100%';
+    }
+  };
+  
+  updateProgress();
+  document.addEventListener('astro:after-swap', updateProgress);
+</script>
+
+<style>
+  .card {
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, border-color 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  .icon-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--icon-color), transparent 85%);
+    color: var(--icon-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .content {
+    flex-grow: 1;
+  }
+  .content h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .content p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .arrow {
+    color: var(--text-muted);
+    transition: transform 0.2s, color 0.2s;
+  }
+  .card:hover .arrow {
+    transform: translateX(4px);
+    color: var(--primary);
+  }
+
+  @media (max-width: 640px) {
+    .card {
+      padding: 1.25rem;
+    }
+    .icon-wrapper {
+      width: 44px;
+      height: 44px;
+    }
+  }
+</style>

@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const tools = [
+  {
+    name: "Git & GitHub",
+    description: "Git es el estándar de la industria para el control de versiones. GitHub es la plataforma donde reside el código del mundo. Dominarlos es obligatorio para trabajar en equipo.",
+    skills: ["Branching", "Pull Requests", "Conflict Resolution", "GitHub Actions"],
+    importance: "Sin esto, no puedes trabajar en una empresa de tecnología."
+  },
+  {
+    name: "LinkedIn Profesional",
+    description: "Tu perfil es tu carta de presentación ante el mundo. No es solo un CV, es una red de contactos que te abrirá puertas a oportunidades globales.",
+    skills: ["Personal Branding", "Networking", "Content Creation", "Job Search"],
+    importance: "Aquí es donde los reclutadores te encuentran. Un buen perfil = mejores ofertas."
+  },
+  {
+    name: "Docker & Virtualización",
+    description: "Permite empaquetar tu aplicación con todas sus dependencias. 'Funciona en mi máquina' deja de ser una excusa.",
+    skills: ["Containers", "Images", "Docker Compose", "Volumes"],
+    importance: "Vital para asegurar que tu código se comporte igual en desarrollo y producción."
+  }
+];
+
+const ecosystem = [
+  { title: "Terminal & Shell", d: "Aprende a usar la línea de comandos (Bash/Zsh). Es mucho más rápido que usar una interfaz visual." },
+  { title: "Package Managers", d: "Domina NPM, Yarn o PNPM para Node.js; Maven o Gradle para Java." },
+  { title: "Cloud Fundamentals", d: "Entiende qué es AWS, Azure o Google Cloud y cómo funcionan los servicios básicos." }
+];
+---
+
+<BaseLayout title="Herramientas Pro">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Ecosistema del <span class="gradient-text">Programador Profesional</span></h1>
+      <p>El código es solo una herramienta más. Para ser un ingeniero de software completo, necesitas dominar el entorno, la colaboración y tu marca personal.</p>
+    </section>
+
+    <div class="pro-tools-grid animate-fade" style="animation-delay: 0.1s;">
+      {tools.map(tool => (
+        <div class="pro-card glass">
+          <div class="pro-content">
+            <div class="card-title">
+              <h3>{tool.name}</h3>
+              <p>{tool.description}</p>
+            </div>
+            <div class="skills-box">
+              <strong>Habilidades clave:</strong>
+              <div class="tags-container">
+                {tool.skills.map(s => <span>{s}</span>)}
+              </div>
+            </div>
+            <div class="importance-box">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <p>{tool.importance}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <section class="ecosystem-section animate-fade" style="animation-delay: 0.2s;">
+      <div class="eco-card glass">
+        <h2>Otros Imprescindibles</h2>
+        <div class="eco-grid">
+          {ecosystem.map(item => (
+            <div class="eco-item">
+              <h4>{item.title}</h4>
+              <p>{item.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+    <div class="complete-box animate-fade">
+      <button class="btn-3d btn-complete" data-category="pro-tools">Marcar como Completado</button>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  function setupCompletion() {
+    const btn = document.querySelector('.btn-complete');
+    const cat = btn?.getAttribute('data-category');
+    if (btn && cat) {
+      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+      if (progress[cat]) btn.textContent = '✅ Lección Completada';
+
+      btn.addEventListener('click', () => {
+        progress[cat] = true;
+        localStorage.setItem('lacademy_progress', JSON.stringify(progress));
+        btn.textContent = '✅ Lección Completada';
+
+        const xp = parseInt(localStorage.getItem('lacademy_xp') || '0');
+        localStorage.setItem('lacademy_xp', (xp + 500).toString());
+
+        alert('¡Progreso guardado! Revisa el lobby para ver tu avance.');
+      });
+    }
+  }
+  setupCompletion();
+  document.addEventListener('astro:after-swap', setupCompletion);
+</script>
+
+<style>
+  .complete-box { margin: 4rem 0; text-align: center; }
+  .hero { text-align: center; padding: 4rem 0; max-width: 800px; margin: 0 auto; }
+  .hero p { color: var(--text-muted); font-size: 1.1rem; margin-top: 1rem; }
+
+  .pro-tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 2.5rem; margin-bottom: 5rem; }
+  .pro-card { padding: 3rem; border-radius: 2rem; border: 1px solid var(--border); display: flex; flex-direction: column; transition: all 0.3s; }
+  .pro-card:hover { transform: translateY(-8px); border-color: var(--primary); }
+  
+  .card-title h3 { font-size: 2rem; color: var(--primary); margin-bottom: 1rem; }
+  .card-title p { color: var(--text-muted); line-height: 1.6; font-size: 1rem; margin-bottom: 2rem; }
+
+  .skills-box { margin-bottom: 2rem; }
+  .skills-box strong { display: block; margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text); }
+  .tags-container { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .tags-container span { background: rgba(99, 102, 241, 0.1); color: var(--primary); padding: 0.4rem 1rem; border-radius: 0.75rem; font-size: 0.8rem; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.2); }
+
+  .importance-box { display: flex; gap: 1rem; background: rgba(245, 158, 11, 0.05); padding: 1.25rem; border-radius: 1rem; border: 1px solid rgba(245, 158, 11, 0.1); margin-top: auto; }
+  .importance-box p { font-size: 0.9rem; color: var(--accent); font-style: italic; }
+
+  .ecosystem-section { margin-bottom: 6rem; }
+  .eco-card { padding: 4rem; border-radius: 2.5rem; }
+  .eco-card h2 { text-align: center; font-size: 2.5rem; margin-bottom: 3.5rem; }
+  .eco-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
+  .eco-item h4 { font-size: 1.3rem; color: var(--primary); margin-bottom: 0.75rem; }
+  .eco-item p { color: var(--text-muted); line-height: 1.5; font-size: 0.95rem; }
+
+  @media (max-width: 768px) {
+    .eco-card { padding: 2.5rem; }
+    .pro-card { padding: 2rem; }
+  }
+</style>

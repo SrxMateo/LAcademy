@@ -1,0 +1,146 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const tools = [
+  {
+    name: "Framer AI",
+    description: "La herramienta líder para diseñadores que quieren pasar de la idea al sitio publicado en segundos. Ideal para prototipos y landing pages de alta fidelidad.",
+    prompt: "Crea un sitio web minimalista para un estudio de arquitectura llamado 'Luma Space'. Usa una paleta de grises, mucha tipografía elegante y una galería de proyectos a pantalla completa.",
+    link: "https://framer.com",
+    features: ["Responsive automático", "Efectos de scroll premium", "Dominio personalizado"]
+  },
+  {
+    name: "V0.dev (by Vercel)",
+    description: "Genera componentes de interfaz de usuario (UI) usando React, Tailwind CSS y Shadcn UI. Es el estándar para desarrolladores modernos.",
+    prompt: "Genera una sección de precios (pricing) con tres niveles: Gratis, Pro y Enterprise. El nivel Pro debe estar destacado con un gradiente y un botón de 'Comenzar ahora'.",
+    link: "https://v0.dev",
+    features: ["Código limpio", "Integración con GitHub", "Soporte para Dark Mode"]
+  },
+  {
+    name: "10Web",
+    description: "Plataforma impulsada por IA que automatiza la creación, alojamiento y optimización de sitios WordPress. Ideal para escalar negocios rápidamente.",
+    prompt: "Clona este diseño de portafolio y conviértelo en un sitio WordPress funcional optimizado para móviles.",
+    link: "https://10web.io",
+    features: ["Optimización de velocidad Google", "Backups automáticos", "Constructor Drag & Drop"]
+  }
+];
+
+const guides = [
+  {
+    title: "El Flujo de Trabajo Ideal",
+    steps: [
+      "Define la estructura (Sitemap) usando herramientas como Whimsical.",
+      "Genera los componentes base con V0.dev para ahorrar tiempo de código.",
+      "Utiliza Framer para las animaciones y el diseño visual de alto impacto.",
+      "Despliega en Vercel o Netlify para máxima velocidad."
+    ]
+  }
+];
+---
+
+<BaseLayout title="IAs para Páginas Web">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>IAs para <span class="gradient-text">Páginas Web</span></h1>
+      <p>La inteligencia artificial ha revolucionado cómo construimos la web. Desde el diseño visual hasta el código funcional, estas herramientas te permiten crear proyectos robustos en tiempo récord.</p>
+    </section>
+
+    <div class="tools-grid animate-fade" style="animation-delay: 0.1s;">
+      {tools.map(tool => (
+        <div class="tool-card glass">
+          <div class="tool-header">
+            <h3>{tool.name}</h3>
+            <div class="features-tags">
+              {tool.features.map(f => <span>{f}</span>)}
+            </div>
+          </div>
+          <p>{tool.description}</p>
+          <div class="prompt-box">
+            <span class="prompt-label">Prompt Maestro:</span>
+            <code>{tool.prompt}</code>
+          </div>
+          <a href={tool.link} target="_blank" class="btn-primary" style="margin-top: auto;">Probar {tool.name}</a>
+        </div>
+      ))}
+    </div>
+
+    <section class="deep-dive animate-fade" style="animation-delay: 0.2s;">
+      {guides.map(guide => (
+        <div class="guide-card glass">
+          <h2>{guide.title}</h2>
+          <div class="steps-list">
+            {guide.steps.map((step, i) => (
+              <div class="step-item">
+                <div class="step-num">{i + 1}</div>
+                <p>{step}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+    <div class="complete-box animate-fade">
+      <button class="btn-3d btn-complete" data-category="web-ai">Marcar como Completado</button>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  function setupCompletion() {
+    const btn = document.querySelector('.btn-complete');
+    const cat = btn?.getAttribute('data-category');
+    if (btn && cat) {
+      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+      if (progress[cat]) btn.textContent = '✅ Lección Completada';
+
+      btn.addEventListener('click', () => {
+        progress[cat] = true;
+        localStorage.setItem('lacademy_progress', JSON.stringify(progress));
+        btn.textContent = '✅ Lección Completada';
+        
+        const xp = parseInt(localStorage.getItem('lacademy_xp') || '0');
+        localStorage.setItem('lacademy_xp', (xp + 500).toString());
+
+        alert('¡Progreso guardado! Revisa el lobby para ver tu avance.');
+      });
+    }
+  }
+  setupCompletion();
+  document.addEventListener('astro:after-swap', setupCompletion);
+</script>
+
+<style>
+  .complete-box { margin: 4rem 0; text-align: center; }
+  .hero { text-align: center; padding: 4rem 0; max-width: 800px; margin: 0 auto; }
+  .hero p { color: var(--text-muted); font-size: 1.1rem; margin-top: 1rem; }
+  
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; margin-bottom: 5rem; }
+  .tool-card { padding: 2.5rem; border-radius: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  .tool-header h3 { font-size: 1.8rem; color: var(--primary); margin-bottom: 1rem; }
+  .features-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .features-tags span { font-size: 0.7rem; background: rgba(99, 102, 241, 0.1); color: var(--primary); padding: 0.2rem 0.6rem; border-radius: 999px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.2); }
+  
+  .prompt-box { background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 1rem; border-left: 4px solid var(--primary); position: relative; }
+  .prompt-label { display: block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.75rem; color: var(--accent); }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text); line-height: 1.4; }
+
+  .deep-dive { margin-bottom: 6rem; }
+  .guide-card { padding: 4rem; border-radius: 2.5rem; }
+  .guide-card h2 { font-size: 2.5rem; margin-bottom: 3rem; text-align: center; }
+  .steps-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; }
+  .step-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.5rem; }
+  .step-num { width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+  .step-item p { color: var(--text-muted); line-height: 1.6; }
+
+  @media (max-width: 768px) {
+    .guide-card { padding: 2.5rem; }
+    .steps-list { grid-template-columns: 1fr; gap: 2rem; }
+  }
+</style>

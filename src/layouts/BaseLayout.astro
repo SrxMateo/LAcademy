@@ -1,0 +1,371 @@
+---
+import '../styles/global.css';
+import { ViewTransitions } from 'astro:transitions';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<ViewTransitions />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | L-Academy</title>
+		<meta name="description" content={description} />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+		<script is:inline>
+			const theme = (() => {
+				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+					return localStorage.getItem('theme');
+				}
+				if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					return 'dark';
+				}
+				return 'light';
+			})();
+			document.documentElement.setAttribute('data-theme', theme);
+		</script>
+		<style is:global>
+			.bg-glow {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: 
+					radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+					radial-gradient(circle at 80% 70%, rgba(245, 158, 11, 0.05) 0%, transparent 40%);
+				pointer-events: none;
+				z-index: -1;
+			}
+      #particles-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.3;
+      }
+      .luma-console {
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        width: 600px;
+        max-width: 90vw;
+        background: rgba(0, 0, 0, 0.95);
+        border: 2px solid var(--primary);
+        box-shadow: 0 0 50px rgba(99, 102, 241, 0.5);
+        z-index: 9999;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        font-family: 'JetBrains Mono', monospace;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .luma-console.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .console-header { display: flex; align-items: center; gap: 0.5rem; }
+      .console-prompt { color: var(--primary); font-weight: 700; white-space: nowrap; }
+      .console-input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.1rem;
+        outline: none;
+      }
+      .console-output {
+        margin-top: 1rem;
+        max-height: 200px;
+        overflow-y: auto;
+        color: #aaa;
+        font-size: 0.9rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 0.5rem;
+      }
+		</style>
+	</head>
+	<body>
+		<div class="bg-glow"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Luma Console (Easter Egg: Ctrl+K) -->
+    <div id="luma-console" class="luma-console glass">
+      <div class="console-header">
+        <span class="console-prompt">LumaOS v1.0 ></span>
+        <input type="text" id="console-input" class="console-input" placeholder="Escribe un comando... (try 'help')" autofocus />
+      </div>
+      <div id="console-output" class="console-output"></div>
+    </div>
+
+		<slot />
+
+    <!-- AI Tutor FAB -->
+    <div class="ai-tutor-container">
+      <div id="ai-chat" class="ai-chat-window glass hidden">
+        <div class="chat-header">
+          <h3>Asistente L-Academy</h3>
+          <select id="ai-personality" class="personality-select">
+            <option value="standard">🤖 Estándar</option>
+            <option value="socratic">🤔 Socrático</option>
+            <option value="strict">👨‍🏫 Estricto</option>
+          </select>
+          <button id="close-chat">×</button>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+          <div class="msg bot">¡Hola! Soy tu tutor de IA. ¿En qué puedo ayudarte hoy? Prueba preguntando por "Minecraft", "Web" o "Prompts".</div>
+        </div>
+        <div class="chat-input">
+          <input type="text" id="user-input" placeholder="Pregúntame algo..." />
+          <button id="send-msg">➤</button>
+        </div>
+      </div>
+      <button id="ai-toggle" class="ai-fab btn-3d">
+        <span>🤖 Tutor IA</span>
+      </button>
+    </div>
+
+		<script>
+			function applyTheme() {
+				const themeToggle = document.getElementById('theme-toggle');
+				if (themeToggle) {
+					themeToggle.addEventListener('click', () => {
+						const currentTheme = document.documentElement.getAttribute('data-theme');
+						const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+						document.documentElement.setAttribute('data-theme', newTheme);
+						localStorage.setItem('theme', newTheme);
+					});
+				}
+			}
+
+      function setupAITutor() {
+        const toggle = document.getElementById('ai-toggle');
+        const chat = document.getElementById('ai-chat');
+        const close = document.getElementById('close-chat');
+        const send = document.getElementById('send-msg');
+        const input = document.getElementById('user-input') as HTMLInputElement;
+        const messages = document.getElementById('chat-messages');
+        const personality = document.getElementById('ai-personality') as HTMLSelectElement;
+
+        const knowledge = {
+          minecraft: "Para crear un plugin de Minecraft, necesitas Java 17+ y la API de Paper. Empieza por el archivo plugin.yml y la clase principal que extiende JavaPlugin.",
+          web: "El desarrollo web moderno usa frameworks como Astro para velocidad (islas de interactividad) y Next.js para aplicaciones dinámicas complejas.",
+          prompts: "Un buen prompt debe tener: Rol (quién es la IA), Contexto (qué está pasando), Tarea (qué debe hacer) y Formato (cómo debe responder).",
+          git: "Git es para control de versiones local. GitHub es la plataforma en la nube para colaborar. Usa 'git commit' para guardar y 'git push' para subir.",
+          linkedin: "En LinkedIn, optimiza tu 'About' con palabras clave, usa una foto profesional y comparte tus proyectos de L-Academy.",
+          python: "Python es el lenguaje rey de la IA. Úsalo para automatizar tareas, analizar datos o crear bots con librerías como Selenium o PyAutoGUI.",
+          cyber: "La ciberseguridad empieza por nunca confiar en la entrada del usuario. Sanitiza tus formularios y usa HTTPS en todos tus sitios.",
+          video: "Herramientas como Runway Gen-2 te permiten crear videos desde texto. HeyGen es ideal para avatares realistas que hablan.",
+          astro: "Astro es un framework web ultra-rápido que entrega CERO JavaScript por defecto. Es el corazón de esta academia.",
+          react: "React es una librería de JS para crear interfaces basadas en componentes. Es el estándar de la industria actual.",
+          java: "Java es un lenguaje robusto y tipado, ideal para plugins de Minecraft y grandes sistemas empresariales.",
+          sql: "SQL es el lenguaje para hablar con bases de datos relacionales como PostgreSQL o MySQL.",
+          docker: "Docker empaqueta tu app en contenedores para que funcione igual en cualquier servidor VPS.",
+          api: "Una API permite que dos sistemas hablen entre sí. REST y GraphQL son los estilos más comunes.",
+          vps: "Tu VPS es tu propio servidor en la nube. Úsala para desplegar tus proyectos de L-Academy con Nginx y PM2."
+        };
+
+        toggle?.addEventListener('click', () => chat?.classList.toggle('hidden'));
+        close?.addEventListener('click', () => chat?.classList.add('hidden'));
+
+        const addMessage = (text: string, type: 'user' | 'bot') => {
+          if (!messages) return;
+          const div = document.createElement('div');
+          div.className = `msg ${type}`;
+          div.textContent = text;
+          messages.appendChild(div);
+          messages.scrollTop = messages.scrollHeight;
+        };
+
+        const handleSend = () => {
+          const val = input?.value.toLowerCase();
+          if (!val) return;
+          addMessage(input.value, 'user');
+          input.value = '';
+
+          setTimeout(() => {
+            let response = "Interesante pregunta. No tengo información específica sobre eso en mi base local, ¡pero sigue explorando los cursos!";
+            for (const key in knowledge) {
+              if (val.includes(key)) {
+                response = knowledge[key as keyof typeof knowledge];
+                break;
+              }
+            }
+
+            if (personality?.value === 'socratic') {
+              response = `¿Qué crees tú que pasaría si...? ${response} ¿Cómo lo aplicarías en tu proyecto?`;
+            } else if (personality?.value === 'strict') {
+              response = `¡Presta atención! Esto es vital: ${response} No cometas errores básicos.`;
+            }
+
+            addMessage(response, 'bot');
+          }, 800);
+        };
+
+        send?.addEventListener('click', handleSend);
+        input?.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+      }
+
+			// Run on first load
+			applyTheme();
+      setupAITutor();
+      setupParticles();
+      setupConsole();
+
+			// Run on every view transition
+			document.addEventListener('astro:after-swap', () => {
+        applyTheme();
+        setupAITutor();
+        setupParticles();
+        setupConsole();
+      });
+
+      function setupParticles() {
+        const canvas = document.getElementById('particles-canvas') as HTMLCanvasElement;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles: any[] = [];
+        for (let i = 0; i < 50; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 2
+          });
+        }
+
+        function animate() {
+          ctx?.clearRect(0, 0, canvas.width, canvas.height);
+          ctx!.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#000';
+          
+          particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            ctx?.beginPath();
+            ctx?.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx?.fill();
+          });
+          requestAnimationFrame(animate);
+        }
+        animate();
+      }
+
+      function setupConsole() {
+        const consoleEl = document.getElementById('luma-console');
+        const input = document.getElementById('console-input') as HTMLInputElement;
+        const output = document.getElementById('console-output');
+
+        document.addEventListener('keydown', (e) => {
+          if (e.ctrlKey && e.key === 'k') {
+            e.preventDefault();
+            consoleEl?.classList.toggle('open');
+            if (consoleEl?.classList.contains('open')) input?.focus();
+          }
+          if (e.key === 'Escape') consoleEl?.classList.remove('open');
+        });
+
+        input?.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            const cmd = input.value.toLowerCase().trim();
+            const log = (text: string) => {
+              if (output) output.innerHTML = `<div>> ${text}</div>` + output.innerHTML;
+            };
+
+            if (cmd === 'help') log('Comandos: help, clear, theme, home, srxmateo, matrix');
+            else if (cmd === 'clear') { if (output) output.innerHTML = ''; }
+            else if (cmd === 'theme') {
+              const current = document.documentElement.getAttribute('data-theme');
+              const next = current === 'dark' ? 'light' : 'dark';
+              document.documentElement.setAttribute('data-theme', next);
+              localStorage.setItem('theme', next);
+              log(`Tema cambiado a ${next}`);
+            }
+            else if (cmd === 'home') window.location.href = '/';
+            else if (cmd === 'srxmateo') log('El fundador y visionario detrás de L-Academy.');
+            else if (cmd === 'matrix') {
+              log('Inyectando modo hacker...');
+              document.body.style.filter = 'hue-rotate(90deg) brightness(1.2)';
+            }
+            else log(`Comando desconocido: ${cmd}`);
+            
+            input.value = '';
+          }
+        });
+      }
+		</script>
+
+    <style is:global>
+      .ai-tutor-container {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 1000;
+      }
+      .ai-fab {
+        width: auto !important;
+        height: auto !important;
+        border-radius: 999px !important;
+        padding: 0.75rem 1.5rem !important;
+      }
+      .ai-chat-window {
+        position: absolute;
+        bottom: 4.5rem;
+        right: 0;
+        width: 320px;
+        height: 400px;
+        border-radius: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: all 0.3s;
+      }
+      .ai-chat-window.hidden {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+        pointer-events: none;
+      }
+      .chat-header {
+        padding: 1rem;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .chat-header button { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+      .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; }
+      .msg { padding: 0.6rem 1rem; border-radius: 1rem; font-size: 0.9rem; max-width: 85%; }
+      .msg.bot { background: var(--card); border: 1px solid var(--border); align-self: flex-start; }
+      .msg.user { background: var(--primary); color: white; align-self: flex-end; }
+      .chat-input { padding: 1rem; display: flex; gap: 0.5rem; border-top: 1px solid var(--border); }
+      .chat-input input { flex: 1; background: var(--background); border: 1px solid var(--border); padding: 0.5rem; border-radius: 0.5rem; color: var(--text); }
+      .chat-input button { background: var(--primary); border: none; color: white; width: 35px; border-radius: 0.5rem; cursor: pointer; }
+      .personality-select { background: rgba(255,255,255,0.1); border: none; color: white; font-size: 0.7rem; border-radius: 0.4rem; padding: 0.2rem; outline: none; }
+    </style>
+	</body>
+</html>

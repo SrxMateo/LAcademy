@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+---
+
+<BaseLayout title="Certificado L-Academy">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Tu <span class="gradient-text">Certificación Oficial</span></h1>
+      <p>Has completado el camino del desarrollador en LumaXCorp.</p>
+    </section>
+
+    <div class="cert-viewer animate-fade">
+      <div id="certificate" class="certificate-card glass">
+        <div class="cert-border"></div>
+        <div class="cert-content">
+          <div class="cert-header">
+            <span class="l">L</span>-Academy
+            <p>LumaxCorp Certified Program</p>
+          </div>
+          <h2>CERTIFICADO DE EXCELENCIA</h2>
+          <p class="cert-text">Se otorga el presente reconocimiento a:</p>
+          <h3 id="cert-user-name">TU NOMBRE AQUÍ</h3>
+          <p class="cert-desc">Por haber completado con éxito todos los módulos de Inteligencia Artificial, Desarrollo Web Robusto y Programación de Plugins en la plataforma L-Academy.</p>
+          <div class="cert-footer">
+            <div class="signature">
+              <div class="sig-line"></div>
+              <p>SrxMateo</p>
+              <span>Founder of LumaXCorp</span>
+            </div>
+            <div class="cert-id">
+              <p>ID de Certificación:</p>
+              <span id="cert-id-num">LMX-2026-XXXX</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-actions glass">
+        <h3>Personaliza tu Certificado</h3>
+        <input type="text" id="user-name-input" placeholder="Escribe tu nombre completo" />
+        <button id="btn-download-cert" class="btn-3d">Descargar como Imagen</button>
+        <button onclick="window.print()" class="btn-secondary">Imprimir PDF</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function setupCert() {
+      const nameInput = document.getElementById('user-name-input') as HTMLInputElement;
+      const certName = document.getElementById('cert-user-name');
+      const certID = document.getElementById('cert-id-num');
+
+      nameInput?.addEventListener('input', () => {
+        if (certName) certName.textContent = nameInput.value.toUpperCase() || 'TU NOMBRE AQUÍ';
+      });
+
+      if (certID) {
+        const rand = Math.floor(Math.random() * 9000) + 1000;
+        certID.textContent = `LMX-2026-${rand}`;
+      }
+    }
+
+    setupCert();
+    document.addEventListener('astro:after-swap', setupCert);
+  </script>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 3rem 0; }
+  .cert-viewer { display: grid; grid-template-columns: 1fr 350px; gap: 3rem; margin-bottom: 6rem; align-items: start; }
+  
+  .certificate-card { padding: 4rem; border-radius: 0.5rem; position: relative; aspect-ratio: 1.414/1; display: flex; flex-direction: column; align-items: center; text-align: center; background: #fff; color: #000; border: 15px solid #0f172a; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+  .cert-border { position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border: 2px solid #f59e0b; pointer-events: none; }
+  
+  .cert-header { margin-bottom: 2rem; }
+  .cert-header .l { color: var(--primary); font-size: 2.5rem; font-weight: 900; }
+  .cert-header p { font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; margin-top: -5px; }
+
+  h2 { font-size: 2.5rem; margin-bottom: 1.5rem; letter-spacing: 0.1em; color: #0f172a; }
+  .cert-text { font-style: italic; margin-bottom: 1rem; }
+  h3#cert-user-name { font-size: 3rem; font-family: 'Times New Roman', serif; margin-bottom: 2rem; border-bottom: 2px solid #000; display: inline-block; padding: 0 2rem; }
+  .cert-desc { max-width: 80%; line-height: 1.6; font-size: 1.1rem; margin-bottom: 3rem; }
+
+  .cert-footer { display: flex; justify-content: space-between; width: 100%; margin-top: auto; align-items: flex-end; }
+  .signature { text-align: center; }
+  .sig-line { width: 200px; height: 1px; background: #000; margin-bottom: 0.5rem; }
+  .cert-id { text-align: right; font-size: 0.8rem; }
+  .cert-id span { font-weight: 700; color: var(--primary); }
+
+  .cert-actions { padding: 2.5rem; border-radius: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  .cert-actions input { background: var(--background); border: 1px solid var(--border); padding: 1rem; border-radius: 1rem; color: var(--text); font-size: 1rem; }
+
+  @media print {
+    .btn-back, header, .cert-actions, .hero, .ai-tutor-container { display: none !important; }
+    .certificate-card { box-shadow: none; border: 10px solid #000; width: 100%; height: auto; position: absolute; top: 0; left: 0; }
+  }
+
+  @media (max-width: 1100px) {
+    .cert-viewer { grid-template-columns: 1fr; }
+    .certificate-card { width: 100%; height: auto; }
+  }
+</style>

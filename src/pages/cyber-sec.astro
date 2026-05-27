@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const modules = [
+  { title: "Seguridad en el Código", d: "Aprende a evitar inyecciones SQL, XSS y vulnerabilidades comunes en tus apps." },
+  { title: "Hardening de Servidores", d: "Configura tu VPS (Nginx, SSH, Firewall) para ser impenetrable." },
+  { title: "Criptografía Básica", d: "Uso correcto de hashing de contraseñas y cifrado de datos sensibles." }
+];
+---
+
+<BaseLayout title="Ciberseguridad">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Ciberseguridad para <span class="gradient-text">Developers</span></h1>
+      <p>Protege tus creaciones. Un programador que no sabe de seguridad es un riesgo para su empresa.</p>
+    </section>
+
+    <div class="cyber-grid animate-fade">
+      {modules.map(mod => (
+        <div class="module-card glass">
+          <h3>{mod.title}</h3>
+          <p>{mod.d}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="complete-box animate-fade">
+      <button class="btn-3d btn-complete" data-category="cyber-sec">Marcar como Completado</button>
+    </div>
+  </main>
+
+  <script>
+    function setupCompletion() {
+      const btn = document.querySelector('.btn-complete');
+      const cat = btn?.getAttribute('data-category');
+      if (btn && cat) {
+        const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+        if (progress[cat]) btn.textContent = '✅ Lección Completada';
+
+        btn.addEventListener('click', () => {
+          progress[cat] = true;
+          localStorage.setItem('lacademy_progress', JSON.stringify(progress));
+          btn.textContent = '✅ Lección Completada';
+          
+          const xp = parseInt(localStorage.getItem('lacademy_xp') || '0');
+          localStorage.setItem('lacademy_xp', (xp + 500).toString());
+
+          alert('¡Progreso guardado! Tu VPS está un poco más segura ahora.');
+        });
+      }
+    }
+    setupCompletion();
+    document.addEventListener('astro:after-swap', setupCompletion);
+  </script>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 4rem 0; }
+  .cyber-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+  .module-card { padding: 2.5rem; border-radius: 2rem; border: 1px solid rgba(239, 68, 68, 0.2); }
+  .module-card h3 { color: #ef4444; margin-bottom: 1rem; }
+  .complete-box { margin: 4rem 0; text-align: center; }
+</style>

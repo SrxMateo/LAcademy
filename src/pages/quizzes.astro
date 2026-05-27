@@ -1,0 +1,149 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const quizzes = [
+  {
+    id: "web-master",
+    title: "Quiz: Maestro Web",
+    questions: [
+      { q: "¿Qué framework es ideal para sitios de alto rendimiento orientados a contenido?", a: "Astro", options: ["React", "Astro", "WordPress"] },
+      { q: "¿Qué significa SEO?", a: "Search Engine Optimization", options: ["Search Engine Optimization", "Secure Entry Object", "Site Engineering Order"] }
+    ],
+    badge: "web-master"
+  },
+  {
+    id: "prompt-pro",
+    title: "Quiz: Prompt Engineering",
+    questions: [
+      { q: "¿Cuál es un elemento clave de un buen prompt?", a: "Contexto", options: ["Contexto", "Mucho texto", "Emojis"] },
+      { q: "¿Qué es el Few-shot prompting?", a: "Dar ejemplos a la IA", options: ["Dar ejemplos a la IA", "Escribir rápido", "Usar pocas palabras"] }
+    ],
+    badge: "prompt-pro"
+  }
+];
+---
+
+<BaseLayout title="Quizzes">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Desafíos y <span class="gradient-text">Quizzes</span></h1>
+      <p>Demuestra lo que has aprendido y desbloquea medallas exclusivas para tu perfil.</p>
+    </section>
+
+    <div class="quizzes-grid">
+      {quizzes.map(quiz => (
+        <div class="quiz-card glass" id={`quiz-${quiz.id}`}>
+          <h3>{quiz.title}</h3>
+          <div class="quiz-status" id={`status-${quiz.id}`}>Cargando...</div>
+          <button class="btn-primary start-quiz" data-quiz-id={quiz.id}>Empezar Quiz</button>
+        </div>
+      ))}
+    </div>
+
+    <!-- Modal Quiz (Simple) -->
+    <div id="quiz-modal" class="modal hidden">
+      <div class="modal-content glass">
+        <h2 id="modal-title">Pregunta</h2>
+        <p id="modal-question"></p>
+        <div id="modal-options" class="options-grid"></div>
+      </div>
+    </div>
+  </main>
+
+  <script define:vars={{ quizzes }}>
+    function setupQuizzes() {
+      const badges = JSON.parse(localStorage.getItem('lacademy_badges') || '[]');
+      
+      quizzes.forEach(quiz => {
+        const status = document.getElementById(`status-${quiz.id}`);
+        const btn = document.querySelector(`[data-quiz-id="${quiz.id}"]`);
+        if (badges.includes(quiz.badge)) {
+          status.textContent = '✅ Completado - Medalla Obtenida';
+          status.classList.add('completed');
+          if (btn) btn.textContent = 'Repetir Quiz';
+        } else {
+          status.textContent = '⏳ Pendiente';
+        }
+      });
+
+      const modal = document.getElementById('quiz-modal');
+      let currentQuiz = null;
+      let currentStep = 0;
+
+      document.querySelectorAll('.start-quiz').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-quiz-id');
+          currentQuiz = quizzes.find(q => q.id === id);
+          currentStep = 0;
+          showQuestion();
+        });
+      });
+
+      function showQuestion() {
+        if (!currentQuiz) return;
+        const question = currentQuiz.questions[currentStep];
+        if (!question) {
+          finishQuiz();
+          return;
+        }
+
+        modal.classList.remove('hidden');
+        document.getElementById('modal-title').textContent = `${currentQuiz.title} (${currentStep + 1}/${currentQuiz.questions.length})`;
+        document.getElementById('modal-question').textContent = question.q;
+        
+        const optionsContainer = document.getElementById('modal-options');
+        optionsContainer.innerHTML = question.options.map(opt => `
+          <button class="opt-btn glass">${opt}</button>
+        `).join('');
+
+        optionsContainer.querySelectorAll('.opt-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (btn.textContent === question.a) {
+              currentStep++;
+              showQuestion();
+            } else {
+              alert('Respuesta incorrecta. ¡Inténtalo de nuevo!');
+              modal.classList.add('hidden');
+            }
+          });
+        });
+      }
+
+      function finishQuiz() {
+        const badges = JSON.parse(localStorage.getItem('lacademy_badges') || '[]');
+        if (!badges.includes(currentQuiz.badge)) {
+          badges.push(currentQuiz.badge);
+          localStorage.setItem('lacademy_badges', JSON.stringify(badges));
+        }
+        alert('¡Felicidades! Has completado el quiz y ganado una medalla.');
+        modal.classList.add('hidden');
+        location.reload();
+      }
+    }
+
+    setupQuizzes();
+    document.addEventListener('astro:after-swap', setupQuizzes);
+  </script>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 4rem 0; }
+  .quizzes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 6rem; }
+  .quiz-card { padding: 2.5rem; border-radius: 2rem; text-align: center; display: flex; flex-direction: column; gap: 1.5rem; }
+  .quiz-status { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); }
+  .quiz-status.completed { color: var(--success); }
+
+  .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .modal.hidden { display: none; }
+  .modal-content { max-width: 600px; width: 100%; padding: 3rem; border-radius: 2.5rem; text-align: center; }
+  .options-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; }
+  .opt-btn { padding: 1rem; border-radius: 1rem; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; font-weight: 600; }
+  .opt-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+</style>

@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const topUsers = [
+  { name: "SrxMateo", badges: 12, points: 5400, level: "Luma God" },
+  { name: "NeoCoder", badges: 8, points: 3200, level: "Senior AI" },
+  { name: "Ghost_X", badges: 6, points: 2100, level: "Mid Dev" },
+  { name: "LumaFan_1", badges: 4, points: 1200, level: "Junior" }
+];
+---
+
+<BaseLayout title="Ranking de Estudiantes">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Top <span class="gradient-text">Luma Students</span></h1>
+      <p>Los desarrolladores más activos de la comunidad LumaXCorp.</p>
+    </section>
+
+    <div class="leaderboard-container glass animate-fade">
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rango</th>
+            <th>Usuario</th>
+            <th>Medallas</th>
+            <th>LumaPoints</th>
+            <th>Rango</th>
+          </tr>
+        </thead>
+        <tbody>
+          {topUsers.map((user, i) => (
+            <tr>
+              <td class="rank-num">#{i + 1}</td>
+              <td class="user-name"><strong>{user.name}</strong></td>
+              <td>{user.badges} 🏅</td>
+              <td>{user.points} XP</td>
+              <td><span class="level-tag">{user.level}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="user-rank-box glass animate-fade">
+      <h3>Tu Posición Actual</h3>
+      <p>Aún no has iniciado sesión o no tienes suficientes puntos para entrar en el Top 10.</p>
+      <button class="btn-3d">Sincronizar Progreso</button>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 4rem 0; }
+  .leaderboard-container { border-radius: 2rem; overflow: hidden; margin-bottom: 4rem; border: 1px solid var(--border); }
+  .leaderboard-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .leaderboard-table th, .leaderboard-table td { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); }
+  .leaderboard-table th { background: rgba(99, 102, 241, 0.1); color: var(--primary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; }
+  
+  .rank-num { font-weight: 900; font-size: 1.2rem; color: var(--primary); }
+  .user-name { font-size: 1.1rem; }
+  .level-tag { background: var(--primary); color: white; padding: 0.2rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 700; }
+
+  .user-rank-box { padding: 3rem; border-radius: 2rem; text-align: center; border: 2px dashed var(--primary); }
+  .user-rank-box h3 { margin-bottom: 1rem; font-size: 1.5rem; }
+  .user-rank-box p { color: var(--text-muted); margin-bottom: 2rem; }
+</style>

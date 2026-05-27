@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const tools = [
+  { name: "Runway Gen-2", d: "La IA más potente para generar video desde texto o imagen." },
+  { name: "HeyGen", d: "Crea avatares realistas que hablan por ti en cualquier idioma." },
+  { name: "CapCut AI", d: "Edición automática con detección de cortes y subtítulos inteligentes." }
+];
+---
+
+<BaseLayout title="IA para Video">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>Creación de <span class="gradient-text">Video con IA</span></h1>
+      <p>Domina el lenguaje visual del siglo XXI. Crea contenido cinematográfico sin cámaras ni estudios.</p>
+    </section>
+
+    <div class="video-grid animate-fade">
+      {tools.map(t => (
+        <div class="video-tool glass">
+          <h3>{t.name}</h3>
+          <p>{t.d}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="complete-box animate-fade">
+      <button class="btn-3d btn-complete" data-category="ai-video">Marcar como Completado</button>
+    </div>
+  </main>
+
+  <script>
+    function setupCompletion() {
+      const btn = document.querySelector('.btn-complete');
+      const cat = btn?.getAttribute('data-category');
+      if (btn && cat) {
+        const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+        if (progress[cat]) btn.textContent = '✅ Lección Completada';
+
+        btn.addEventListener('click', () => {
+          progress[cat] = true;
+          const xp = parseInt(localStorage.getItem('lacademy_xp') || '0');
+          localStorage.setItem('lacademy_xp', (xp + 500).toString());
+          localStorage.setItem('lacademy_progress', JSON.stringify(progress));
+          btn.textContent = '✅ Lección Completada';
+          alert('¡Progreso guardado! Estás listo para crear contenido viral.');
+        });
+      }
+    }
+    setupCompletion();
+    document.addEventListener('astro:after-swap', setupCompletion);
+  </script>
+</BaseLayout>
+
+<style>
+  .hero { text-align: center; padding: 4rem 0; }
+  .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+  .video-tool { padding: 2.5rem; border-radius: 2rem; border-right: 5px solid #ec4899; }
+  .video-tool h3 { color: #ec4899; margin-bottom: 1rem; }
+  .complete-box { margin: 4rem 0; text-align: center; }
+</style>

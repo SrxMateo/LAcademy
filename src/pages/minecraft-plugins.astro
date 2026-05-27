@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const sections = [
+  {
+    title: "1. El Corazón del Plugin",
+    description: "Todo plugin comienza con una clase que hereda de JavaPlugin. Aquí es donde el servidor 'habla' con tu código.",
+    code: 'public class MyPlugin extends JavaPlugin {\n  @Override\n  public void onEnable() {\n    // Se ejecuta al encender el servidor\n    Bukkit.getConsoleSender().sendMessage("§a[MyPlugin] Activado correctamente");\n  }\n\n  @Override\n  public void onDisable() {\n    // Se ejecuta al apagar el servidor\n    saveConfig();\n  }\n}',
+    details: ["onEnable(): Inicializa bases de datos y registros.", "onDisable(): Guarda datos críticos antes del cierre."]
+  },
+  {
+    title: "2. Escuchando Eventos",
+    description: "Los eventos permiten reaccionar a lo que hacen los jugadores (entrar, romper bloques, morir, etc).",
+    code: '@EventHandler\npublic void onJoin(PlayerJoinEvent event) {\n  Player player = event.getPlayer();\n  player.sendMessage("¡Bienvenido al servidor, " + player.getName() + "!");\n  player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);\n}',
+    details: ["Registra tus eventos en la clase principal.", "Usa prioridades (HIGHEST, LOWEST) para evitar conflictos."]
+  },
+  {
+    title: "3. Comandos Personalizados",
+    description: "Permite a los usuarios interactuar con tu plugin mediante la consola o el chat.",
+    code: '@Override\npublic boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {\n  if (cmd.getName().equalsIgnoreCase("sanar")) {\n    if (sender instanceof Player player) {\n       player.setHealth(20.0);\n       player.sendMessage("§eHas sido sanado.");\n    }\n    return true;\n  }\n  return false;\n}',
+    details: ["Define los comandos en el plugin.yml.", "Usa TabCompleter para ayudar al usuario."]
+  }
+];
+
+const checklist = [
+  { t: "JDK 17/21", d: "Asegúrate de tener la versión correcta de Java." },
+  { t: "Maven/Gradle", d: "Usa un gestor de dependencias profesional." },
+  { t: "Paper API", d: "La mejor API por rendimiento y funciones." },
+  { t: "IntelliJ IDEA", d: "El IDE estándar para desarrollo Java." }
+];
+---
+
+<BaseLayout title="Plugins de Minecraft">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <div class="mc-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
+      </div>
+      <h1>Desarrollo de <span class="gradient-text">Plugins Minecraft</span></h1>
+      <p>Conviértete en un desarrollador de servidores profesional. Aprende Java desde las bases y domina la API de Paper para crear experiencias únicas.</p>
+    </section>
+
+    <div class="mc-grid animate-fade" style="animation-delay: 0.1s;">
+      {sections.map(section => (
+        <div class="mc-card glass">
+          <div class="card-content">
+            <h2>{section.title}</h2>
+            <p>{section.description}</p>
+            <div class="code-header">
+              <span>Java (Spigot/Paper)</span>
+            </div>
+            <div class="code-block">
+              <pre><code>{section.code}</code></pre>
+            </div>
+            <ul class="details-list">
+              {section.details.map(d => <li>{d}</li>)}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <section class="checklist-section animate-fade" style="animation-delay: 0.2s;">
+      <div class="checklist-card glass">
+        <h2>Herramientas de Trabajo</h2>
+        <div class="checklist-grid">
+          {checklist.map(item => (
+            <div class="check-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <div>
+                <strong>{item.t}</strong>
+                <p>{item.d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="cta-box">
+          <p>¿Listo para empezar tu primer proyecto?</p>
+          <a href="/guias/maven-setup" class="btn-primary">Configurar Maven</a>
+        </div>
+      </div>
+    </section>
+    <div class="complete-box animate-fade">
+      <button class="btn-3d btn-complete" data-category="mc-plugins">Marcar como Completado</button>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  function setupCompletion() {
+    const btn = document.querySelector('.btn-complete');
+    const cat = btn?.getAttribute('data-category');
+    if (btn && cat) {
+      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+      if (progress[cat]) btn.textContent = '✅ Lección Completada';
+
+      btn.addEventListener('click', () => {
+        progress[cat] = true;
+        localStorage.setItem('lacademy_progress', JSON.stringify(progress));
+        btn.textContent = '✅ Lección Completada';
+
+        const xp = parseInt(localStorage.getItem('lacademy_xp') || '0');
+        localStorage.setItem('lacademy_xp', (xp + 500).toString());
+
+        alert('¡Progreso guardado! Revisa el lobby para ver tu avance.');
+      });
+    }
+  }
+  setupCompletion();
+  document.addEventListener('astro:after-swap', setupCompletion);
+</script>
+
+<style>
+  .complete-box { margin: 4rem 0; text-align: center; }
+  .hero { text-align: center; padding: 4rem 0; max-width: 800px; margin: 0 auto; }
+  .mc-icon { margin-bottom: 1.5rem; }
+  .hero p { color: var(--text-muted); font-size: 1.1rem; margin-top: 1rem; }
+
+  .mc-grid { display: flex; flex-direction: column; gap: 4rem; margin-bottom: 5rem; }
+  .mc-card { border-radius: 2.5rem; overflow: hidden; }
+  .card-content { padding: 4rem; }
+  .mc-card h2 { font-size: 2.2rem; margin-bottom: 1.5rem; color: var(--primary); }
+  .mc-card p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; }
+
+  .code-header { background: #2d2d2d; padding: 0.5rem 1.5rem; border-radius: 1rem 1rem 0 0; color: #aaa; font-size: 0.8rem; font-family: monospace; }
+  .code-block { background: #1e1e1e; padding: 2rem; border-radius: 0 0 1rem 1rem; overflow-x: auto; margin-bottom: 2rem; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+  pre { margin: 0; color: #d4d4d4; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; }
+
+  .details-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+  .details-list li { background: rgba(255, 255, 255, 0.05); padding: 0.75rem 1.25rem; border-radius: 0.75rem; font-size: 0.9rem; color: var(--text-muted); border-left: 3px solid var(--primary); }
+
+  .checklist-section { margin-bottom: 6rem; }
+  .checklist-card { padding: 4rem; border-radius: 2.5rem; }
+  .checklist-card h2 { text-align: center; margin-bottom: 3.5rem; font-size: 2.5rem; }
+  .checklist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; }
+  .check-item { display: flex; gap: 1rem; }
+  .check-item strong { display: block; margin-bottom: 0.25rem; color: var(--primary); }
+  .check-item p { font-size: 0.85rem; color: var(--text-muted); }
+
+  .cta-box { margin-top: 4rem; text-align: center; background: rgba(99, 102, 241, 0.1); padding: 2.5rem; border-radius: 1.5rem; border: 1px dashed var(--primary); }
+  .cta-box p { margin-bottom: 1.5rem; font-weight: 700; font-size: 1.2rem; }
+
+  @media (max-width: 768px) {
+    .card-content { padding: 2rem; }
+    .checklist-card { padding: 2rem; }
+  }
+</style>

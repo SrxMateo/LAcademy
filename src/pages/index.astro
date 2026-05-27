@@ -1,0 +1,246 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+
+const categories = [
+  { id: "web-ai", title: "IAs de Páginas Web", description: "Crea sitios web completos y componentes de UI con solo describirlos.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M7 8h.01"/><path d="M11 8h.01"/><path d="M15 8h.01"/></svg>', href: "/paginas-web", color: "#06b6d4" },
+  { id: "img-ai", title: "IAs de Imágenes", description: "Genera arte, fotos realistas e ilustraciones con prompts avanzados.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>', href: "/imagenes", color: "#f59e0b" },
+  { id: "study-ai", title: "IAs para Estudiar", description: "Mapas conceptuales, resúmenes y ayuda académica inteligente.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>', href: "/estudio", color: "#8b5cf6" },
+  { id: "mc-plugins", title: "Plugins Minecraft", description: "Aprende a programar tus propios plugins desde cero con Java.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>', href: "/minecraft-plugins", color: "#22c55e" },
+  { id: "robust-dev", title: "Desarrollo Robusto", description: "Crea sitios web y aplicaciones móviles escalables y profesionales.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', href: "/desarrollo-robusto", color: "#3b82f6" },
+  { id: "pro-tools", title: "Herramientas Pro", description: "Domina Git, GitHub, LinkedIn y el ecosistema del programador.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>', href: "/herramientas-pro", color: "#f59e0b" },
+  { id: "cyber-sec", title: "Ciberseguridad", description: "Protege tu código y tus servidores de ataques externos.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>', href: "/cyber-sec", color: "#ef4444" },
+  { id: "python-auto", title: "Automatización Python", description: "Crea scripts y bots para automatizar tareas repetitivas.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"/></svg>', href: "/python-auto", color: "#10b981" },
+  { id: "ai-video", title: "IA para Video", description: "Generación y edición de video con herramientas de última generación.", icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="4" rx="2"/><path d="m22 7-8 5 8 5"/></svg>', href: "/ai-video", color: "#ec4899" }
+];
+---
+
+<BaseLayout title="Lobby">
+  <Header />
+  
+  <main class="container">
+    <section class="hero animate-fade">
+      <div class="live-status glass">
+        <span class="dot"></span>
+        <span id="studying-now">142 personas estudiando ahora</span>
+      </div>
+      <div class="badge-hero">Academia de Nueva Generación</div>
+      <h1>Domina el Futuro con <span class="gradient-text">L-Academy</span></h1>
+      <p>Explora cursos avanzados sobre IA, desarrollo de software y herramientas profesionales. Aprende a crear, innovar y liderar en la era digital.</p>
+      
+      <div class="progress-summary glass">
+        <div class="summary-info">
+          <h3>Tu Progreso Global</h3>
+          <span id="progress-pct">0% Completado</span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" id="overall-pb"></div>
+        </div>
+      </div>
+
+      <div class="hero-btns">
+        <a href="#explore" class="btn-3d">Explorar Cursos</a>
+        <a href="/quizzes" class="btn-secondary">Realizar Quizzes</a>
+      </div>
+
+      <div class="lobby-tools animate-fade" style="animation-delay: 0.1s;">
+        <button id="focus-mode-toggle" class="glass-btn">🌙 Modo Enfoque</button>
+        <button id="audio-intro" class="glass-btn">🔊 Escuchar Intro</button>
+      </div>
+    </section>
+
+    <section class="badges-section animate-fade" style="animation-delay: 0.15s;">
+      <div class="badges-header">
+        <h2>Tus Medallas</h2>
+        <a href="/leaderboard" class="link-primary">Ver Ranking Global →</a>
+      </div>
+      <div class="badges-grid" id="badges-container"></div>
+    </section>
+
+    <div id="explore" class="category-grid animate-fade" style="animation-delay: 0.2s;">
+      {categories.map(category => (
+        <div class="card-wrapper">
+          <CategoryCard {...category} />
+          <button class="audio-guide-btn" data-info={category.description}>🔊</button>
+        </div>
+      ))}
+    </div>
+
+    <section class="featured animate-fade" style="animation-delay: 0.3s;">
+      <div class="featured-card glass">
+        <div class="featured-content">
+          <div class="badge">Especialización</div>
+          <h2>Masterclass: Ingeniería de Prompts 2.0</h2>
+          <p>No solo escribas frases. Aprende arquitecturas de prompts y técnicas de razonamiento para LLMs.</p>
+          <div class="btn-group">
+            <a href="/masterclass/prompts" class="btn-primary">Ver Masterclass</a>
+            <a href="/certificate" class="btn-3d">Obtener mi Certificado</a>
+          </div>
+        </div>
+        <div class="featured-visual"><div class="orb"></div></div>
+      </div>
+    </section>
+
+    <section class="prompt-of-day animate-fade" style="animation-delay: 0.4s;">
+      <div class="prompt-container glass">
+        <div class="prompt-header">✨ <h3>Prompt del Día</h3></div>
+        <div class="prompt-body">
+          <p id="daily-prompt">"Actúa como un experto en arquitectura de software. Analiza el siguiente fragmento de código y propón una refactorización SOLID..."</p>
+          <button class="btn-copy">Copiar Prompt</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="quick-links animate-fade" style="animation-delay: 0.5s;">
+      <a href="/playground" class="link-card glass highlight"><span class="icon">💻</span><h4>Code Playground</h4><p>Prueba tu código en tiempo real.</p></a>
+      <a href="/recursos" class="link-card glass"><span class="icon">📚</span><h4>Recursos</h4><p>Cheat Sheets y Plantillas.</p></a>
+      <a href="/galeria" class="link-card glass"><span class="icon">🖼️</span><h4>Galería</h4><p>Inspiración de la comunidad.</p></a>
+      <a href="/creator" class="link-card glass"><span class="icon">🛠️</span><h4>Creador</h4><p>Tus propios prompts.</p></a>
+    </section>
+  </main>
+
+  <script>
+    function updateLobby() {
+      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+      const badges = JSON.parse(localStorage.getItem('lacademy_badges') || '[]');
+      const total = 9;
+      const completed = Object.values(progress).filter(Boolean).length;
+      const pct = Math.round((completed / total) * 100) || 0;
+      const pb = document.getElementById('overall-pb');
+      const txt = document.getElementById('progress-pct');
+      if (pb) pb.style.width = `${pct}%`;
+      if (txt) txt.textContent = `${pct}% Completado`;
+
+      const badgesContainer = document.getElementById('badges-container');
+      if (badgesContainer) {
+        const badgeList = [
+          { id: 'web-master', name: 'Web Master', icon: '🌐' },
+          { id: 'prompt-pro', name: 'Prompt Pro', icon: '⚡' },
+          { id: 'plugin-dev', name: 'Plugin Dev', icon: '📦' },
+          { id: 'ia-artist', name: 'IA Artist', icon: '🎨' }
+        ];
+        badgesContainer.innerHTML = badgeList.map(b => `
+          <div class="badge-item ${badges.includes(b.id) ? '' : 'locked'}">
+            <span class="badge-icon">${b.icon}</span>
+            <span class="badge-name">${b.name}</span>
+          </div>
+        `).join('');
+      }
+
+      // Copy
+      const copyBtn = document.querySelector('.btn-copy');
+      const promptText = document.getElementById('daily-prompt')?.textContent;
+      if (copyBtn && promptText) {
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(promptText);
+          const old = copyBtn.textContent;
+          copyBtn.textContent = '¡Copiado!';
+          setTimeout(() => copyBtn.textContent = old, 2000);
+        };
+      }
+
+      // Live status
+      const statusText = document.getElementById('studying-now');
+      if (statusText) {
+        let count = 142;
+        setInterval(() => {
+          count += Math.floor(Math.random() * 5) - 2;
+          statusText.textContent = `${count} personas estudiando ahora`;
+        }, 5000);
+      }
+
+      // Focus Mode
+      const focusBtn = document.getElementById('focus-mode-toggle');
+      focusBtn?.onclick = () => {
+        document.body.classList.toggle('focus-active');
+        focusBtn.textContent = document.body.classList.contains('focus-active') ? '👁️ Ver Todo' : '🌙 Modo Enfoque';
+      };
+
+      // Audio
+      const speak = (text: string) => {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'es-ES';
+        window.speechSynthesis.speak(u);
+      };
+      document.getElementById('audio-intro')?.onclick = () => speak("Bienvenido a L-Academy por SrxMateo y LumaxCorp. Disfruta el viaje.");
+      document.querySelectorAll('.audio-guide-btn').forEach(b => {
+        (b as HTMLElement).onclick = () => speak(b.getAttribute('data-info') || '');
+      });
+    }
+    updateLobby();
+    document.addEventListener('astro:after-swap', updateLobby);
+  </script>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand"><span class="logo"><span class="l">L</span>-Academy</span><p>Potenciando la próxima generación.</p></div>
+        <div class="footer-links"><a href="#">Privacidad</a><a href="#">Soporte</a></div>
+      </div>
+      <p class="copyright">&copy; 2026 LumaXCorp. Todos los derechos reservados.<br/><span class="credits">Echo por <strong>SrxMateo & LumaxCorp</strong> y desarroyado en <strong>LumaxStudio</strong></span></p>
+    </div>
+  </footer>
+</BaseLayout>
+
+<style>
+  .live-status { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1.25rem; border-radius: 999px; margin-bottom: 2rem; font-size: 0.9rem; font-weight: 600; border: 1px solid var(--border); }
+  .dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; animation: blink 1.5s infinite; }
+  @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+  .progress-summary { margin: 2.5rem auto; max-width: 500px; padding: 2rem; border-radius: 2rem; text-align: left; border: 1px solid var(--primary); }
+  .summary-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .summary-info span { font-weight: 800; color: var(--primary); font-size: 1.2rem; }
+
+  .hero { text-align: center; padding: 6rem 1rem; max-width: 800px; margin: 0 auto; }
+  .hero-btns { display: flex; gap: 1.5rem; justify-content: center; }
+  .lobby-tools { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; }
+  .glass-btn { background: var(--card); border: 1px solid var(--border); padding: 0.6rem 1.2rem; border-radius: 0.75rem; color: var(--text); cursor: pointer; font-weight: 600; transition: all 0.3s; }
+  .glass-btn:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+
+  :global(body.focus-active) *:not(.hero, .hero *, .container, main, main *, #focus-mode-toggle) { opacity: 0.05; pointer-events: none; }
+  :global(body.focus-active) #focus-mode-toggle { opacity: 1 !important; pointer-events: auto !important; position: relative; z-index: 9999; }
+  :global(body.focus-active) .category-grid, :global(body.focus-active) .featured, :global(body.focus-active) .badges-section { opacity: 1 !important; pointer-events: auto !important; }
+
+  .badges-section { margin-bottom: 5rem; text-align: center; }
+  .badges-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+  .link-primary { color: var(--primary); font-weight: 700; text-decoration: none; }
+  .badges-grid { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+
+  .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 2.5rem; margin-bottom: 6rem; }
+  .card-wrapper { position: relative; }
+  .audio-guide-btn { position: absolute; top: 1rem; right: 1rem; background: var(--primary); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; z-index: 10; opacity: 0.5; transition: opacity 0.2s; }
+  .card-wrapper:hover .audio-guide-btn { opacity: 1; }
+
+  .featured-card { border-radius: 2.5rem; padding: 4rem; display: flex; align-items: center; gap: 4rem; overflow: hidden; position: relative; }
+  .btn-group { display: flex; gap: 1.5rem; margin-top: 2rem; }
+  .orb { width: 300px; height: 300px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: pulse 4s infinite alternate; }
+  @keyframes pulse { from { transform: scale(1); opacity: 0.4; } to { transform: scale(1.2); opacity: 0.6; } }
+
+  .prompt-container { padding: 3.5rem; border-radius: 2.5rem; border: 2px solid var(--primary); text-align: center; }
+  .quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 8rem; }
+  .link-card { padding: 2.5rem; border-radius: 2rem; text-align: center; transition: all 0.3s; text-decoration: none; color: inherit; border: 1px solid var(--border); }
+  .link-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.15); }
+  .link-card.highlight { border: 2px solid var(--accent); }
+
+  .footer { padding: 5rem 0 3rem; border-top: 1px solid var(--border); background: rgba(0,0,0,0.02); }
+  .footer-grid { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem; }
+  .footer-brand .logo { font-size: 1.5rem; font-weight: 800; display: block; margin-bottom: 1rem; }
+  .footer-brand .l { color: var(--primary); }
+  .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 250px; }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a { font-size: 0.9rem; color: var(--text-muted); transition: color 0.2s; text-decoration: none; }
+  .footer-links a:hover { color: var(--primary); }
+  .copyright { text-align: center; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border); padding-top: 2rem; }
+  .credits { display: block; margin-top: 0.5rem; opacity: 0.8; font-size: 0.9rem; }
+  .credits strong { color: var(--primary); }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2.8rem; }
+    .category-grid { grid-template-columns: 1fr; }
+    .featured-card { flex-direction: column; padding: 2.5rem; text-align: center; }
+    .btn-group { flex-direction: column; }
+    .footer-grid { flex-direction: column; gap: 2.5rem; text-align: center; align-items: center; }
+  }
+</style>

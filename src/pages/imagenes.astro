@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+
+const images = [
+  {
+    name: "Midjourney",
+    description: "Considerada la IA más avanzada para el arte digital y la fotografía realista. Su motor de renderizado v6 ofrece texturas y luces inigualables.",
+    prompt: "A futuristic greenhouse floating in space, lush plants inside, cinematic lighting, ultra detailed, 8k, Octane render --ar 16:9 --v 6.0",
+    example_img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop",
+    tags: ["Artístico", "Realista", "Comunidad"]
+  },
+  {
+    name: "DALL-E 3",
+    description: "Desarrollada por OpenAI e integrada en ChatGPT. Su fuerte es la precisión semántica: entiende exactamente qué quieres y dónde lo quieres.",
+    prompt: "Un gato vestido de detective de los años 40, analizando una huella digital con una lupa, estilo film noir, blanco y negro.",
+    example_img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop",
+    tags: ["Preciso", "Integrado", "Fácil"]
+  },
+  {
+    name: "Stable Diffusion",
+    description: "La opción de código abierto. Permite control total mediante ControlNet, LoRAs y entrenamiento personalizado. Ideal para profesionales del diseño.",
+    prompt: "Cyberpunk female warrior, mechanical wings, glowing armor, dark alley background, masterpiece, sharp focus, vibrant colors.",
+    example_img: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=1000&auto=format&fit=crop",
+    tags: ["Open Source", "Control Total", "Local"]
+  }
+];
+
+const techniques = [
+  {
+    title: "Técnicas de Prompting Avanzado",
+    items: [
+      { t: "Aspect Ratio", d: "Usa --ar 16:9 o --ar 9:16 para definir el formato de tu imagen." },
+      { t: "Negative Prompts", d: "Especifica qué NO quieres ver (ej: --no blurry, deformed)." },
+      { t: "Lighting Prompts", d: "Añade términos como 'Golden hour', 'Rim lighting' o 'Volumetric fog'." },
+      { t: "Style Reference", d: "Menciona artistas o estilos como 'Cyberpunk', 'Ukiyo-e' o 'Bauhaus'." }
+    ]
+  }
+];
+---
+
+<BaseLayout title="IAs de Imágenes">
+  <Header />
+  <main class="container">
+    <a href="/" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Volver al Lobby
+    </a>
+
+    <section class="hero animate-fade">
+      <h1>IAs de <span class="gradient-text">Imágenes y Arte</span></h1>
+      <p>Transforma tus pensamientos en realidades visuales. Desde el fotorrealismo hasta el arte abstracto, domina las herramientas que están redefiniendo la creatividad humana.</p>
+    </section>
+
+    <div class="images-grid animate-fade" style="animation-delay: 0.1s;">
+      {images.map(img => (
+        <div class="image-card glass">
+          <div class="img-preview" style={`background-image: url(${img.example_img})`}>
+            <div class="tags-overlay">
+              {img.tags.map(tag => <span>{tag}</span>)}
+            </div>
+          </div>
+          <div class="content">
+            <h3>{img.name}</h3>
+            <p>{img.description}</p>
+            <div class="prompt-box">
+              <span class="prompt-label">Prompt Utilizado:</span>
+              <code>{img.prompt}</code>
+            </div>
+            <button class="btn-primary" style="margin-top: 1.5rem; width: 100%; justify-content: center;">Ver Galería</button>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <section class="techniques animate-fade" style="animation-delay: 0.2s;">
+      {techniques.map(tech => (
+        <div class="tech-card glass">
+          <h2>{tech.title}</h2>
+          <div class="tech-grid">
+            {tech.items.map(item => (
+              <div class="tech-item">
+                <h4>{item.t}</h4>
+                <p>{item.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+    <div class="complete-box animate-fade">
+      <button class="btn-3d btn-complete" data-category="img-ai">Marcar como Completado</button>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  function setupCompletion() {
+    const btn = document.querySelector('.btn-complete');
+    const cat = btn?.getAttribute('data-category');
+    if (btn && cat) {
+      const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+      if (progress[cat]) btn.textContent = '✅ Lección Completada';
+
+      btn.addEventListener('click', () => {
+        progress[cat] = true;
+        localStorage.setItem('lacademy_progress', JSON.stringify(progress));
+        btn.textContent = '✅ Lección Completada';
+
+        const xp = parseInt(localStorage.getItem('lacademy_xp') || '0');
+        localStorage.setItem('lacademy_xp', (xp + 500).toString());
+
+        alert('¡Progreso guardado! Revisa el lobby para ver tu avance.');
+      });
+    }
+  }
+  setupCompletion();
+  document.addEventListener('astro:after-swap', setupCompletion);
+</script>
+
+<style>
+  .complete-box { margin: 4rem 0; text-align: center; }
+  .hero { text-align: center; padding: 4rem 0; max-width: 800px; margin: 0 auto; }
+  .hero p { color: var(--text-muted); font-size: 1.1rem; margin-top: 1rem; }
+
+  .images-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 3rem; margin-bottom: 5rem; }
+  .image-card { border-radius: 2rem; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s; }
+  .image-card:hover { transform: translateY(-10px); }
+  
+  .img-preview { height: 250px; background-size: cover; background-position: center; position: relative; }
+  .tags-overlay { position: absolute; bottom: 1rem; left: 1rem; display: flex; gap: 0.5rem; }
+  .tags-overlay span { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: white; padding: 0.2rem 0.6rem; border-radius: 0.5rem; font-size: 0.7rem; font-weight: 700; }
+  
+  .content { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
+  .content h3 { font-size: 1.8rem; margin-bottom: 0.75rem; color: var(--primary); }
+  .content p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
+
+  .prompt-box { background: rgba(0,0,0,0.2); padding: 1.25rem; border-radius: 1rem; border-left: 4px solid var(--accent); }
+  .prompt-label { display: block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--accent); }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text); word-break: break-all; }
+
+  .techniques { margin-bottom: 6rem; }
+  .tech-card { padding: 4rem; border-radius: 2.5rem; }
+  .tech-card h2 { font-size: 2.5rem; margin-bottom: 3rem; text-align: center; }
+  .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2.5rem; }
+  .tech-item h4 { color: var(--primary); font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .tech-item p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+
+  @media (max-width: 768px) {
+    .images-grid { grid-template-columns: 1fr; }
+    .tech-card { padding: 2rem; }
+  }
+</style>
