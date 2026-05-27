@@ -65,46 +65,65 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
       }
       .luma-console {
         position: fixed;
-        top: 30%;
+        top: 40%;
         left: 50%;
         transform: translate(-50%, -50%) scale(0.9);
-        width: 600px;
-        max-width: 90vw;
-        background: rgba(0, 0, 0, 0.95);
-        border: 2px solid var(--primary);
-        box-shadow: 0 0 50px rgba(99, 102, 241, 0.5);
+        width: 700px;
+        max-width: 95vw;
+        background: rgba(10, 10, 15, 0.98);
+        border: 1px solid var(--primary);
+        box-shadow: 0 0 40px rgba(99, 102, 241, 0.3), inset 0 0 20px rgba(99, 102, 241, 0.1);
         z-index: 9999;
-        padding: 1.5rem;
-        border-radius: 1rem;
+        padding: 0;
+        border-radius: 0.75rem;
         font-family: 'JetBrains Mono', monospace;
         opacity: 0;
         pointer-events: none;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        overflow: hidden;
       }
       .luma-console.open {
         opacity: 1;
         pointer-events: auto;
         transform: translate(-50%, -50%) scale(1);
       }
-      .console-header { display: flex; align-items: center; gap: 0.5rem; }
-      .console-prompt { color: var(--primary); font-weight: 700; white-space: nowrap; }
+      .console-top-bar {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .dot-red { width: 12px; height: 12px; background: #ff5f56; border-radius: 50%; }
+      .dot-yellow { width: 12px; height: 12px; background: #ffbd2e; border-radius: 50%; }
+      .dot-green { width: 12px; height: 12px; background: #27c93f; border-radius: 50%; }
+      .console-title { font-size: 0.75rem; color: #666; margin-left: 1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+      .console-body { padding: 1.5rem; }
+      .console-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+      .console-prompt { color: var(--primary); font-weight: 700; font-size: 1rem; }
       .console-input {
-        width: 100%;
+        flex: 1;
         background: transparent;
         border: none;
         color: #fff;
-        font-size: 1.1rem;
+        font-size: 1rem;
         outline: none;
+        caret-color: var(--primary);
       }
       .console-output {
         margin-top: 1rem;
-        max-height: 200px;
+        height: 250px;
         overflow-y: auto;
-        color: #aaa;
-        font-size: 0.9rem;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        padding-top: 0.5rem;
+        color: #d1d1d1;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) transparent;
       }
+      .console-output div { margin-bottom: 0.25rem; }
+      .console-output::-webkit-scrollbar { width: 4px; }
+      .console-output::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 		</style>
 	</head>
 	<body>
@@ -112,12 +131,23 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
     <canvas id="particles-canvas"></canvas>
 
     <!-- Luma Console (Easter Egg: Ctrl+K) -->
-    <div id="luma-console" class="luma-console glass">
-      <div class="console-header">
-        <span class="console-prompt">LumaOS v1.0 ></span>
-        <input type="text" id="console-input" class="console-input" placeholder="Escribe un comando... (try 'help')" autofocus />
+    <div id="luma-console" class="luma-console">
+      <div class="console-top-bar">
+        <div class="dot-red"></div>
+        <div class="dot-yellow"></div>
+        <div class="dot-green"></div>
+        <span class="console-title">luma-terminal — 80x24</span>
       </div>
-      <div id="console-output" class="console-output"></div>
+      <div class="console-body">
+        <div class="console-header">
+          <span class="console-prompt">LumaOS ~</span>
+          <input type="text" id="console-input" class="console-input" placeholder="Escribe 'help'..." autofocus />
+        </div>
+        <div id="console-output" class="console-output">
+          <div style="color:var(--primary); font-weight:bold;">Welcome to LumaOS v2.0.0 (Astro-Kernel)</div>
+          <div style="font-size:0.7rem; opacity:0.5; margin-bottom:1rem;">Type 'help' to see available commands. Press Esc to close.</div>
+        </div>
+      </div>
     </div>
 
 		<slot />
@@ -301,7 +331,7 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
               if (output) output.innerHTML = `<div>> ${text}</div>` + output.innerHTML;
             };
 
-            if (cmd === 'help') log('Comandos: help, clear, theme, home, srxmateo, matrix');
+            if (cmd === 'help') log('Comandos: help, clear, theme, goto [página], status, whoami, neofetch, matrix');
             else if (cmd === 'clear') { if (output) output.innerHTML = ''; }
             else if (cmd === 'theme') {
               const current = document.documentElement.getAttribute('data-theme');
@@ -310,11 +340,57 @@ const { title, description = "L-Academy - Aprende sobre IA y Prompt Engineering"
               localStorage.setItem('theme', next);
               log(`Tema cambiado a ${next}`);
             }
-            else if (cmd === 'home') window.location.href = '/';
-            else if (cmd === 'srxmateo') log('El fundador y visionario detrás de L-Academy.');
+            else if (cmd.startsWith('goto ')) {
+              const page = cmd.split(' ')[1];
+              const pages: Record<string, string> = {
+                'home': '/',
+                'images': '/imagenes',
+                'web': '/paginas-web',
+                'video': '/ai-video',
+                'study': '/estudio',
+                'mc': '/minecraft-plugins',
+                'cyber': '/cyber-sec',
+                'python': '/python-auto',
+                'tools': '/herramientas-pro',
+                'cert': '/certificate',
+                'ranking': '/leaderboard'
+              };
+              if (pages[page]) {
+                log(`Navegando a ${page}...`);
+                setTimeout(() => window.location.href = pages[page], 500);
+              } else {
+                log(`Error: Página '${page}' no encontrada.`);
+              }
+            }
+            else if (cmd === 'status') {
+              const progress = JSON.parse(localStorage.getItem('lacademy_progress') || '{}');
+              const xp = localStorage.getItem('lacademy_xp') || '0';
+              const completed = Object.values(progress).filter(Boolean).length;
+              log(`USER: SrxMateo Colaborador`);
+              log(`XP: ${xp}`);
+              log(`CURSOS COMPLETADOS: ${completed}/9`);
+            }
+            else if (cmd === 'whoami') {
+              log('L-Academy: Una visión de SrxMateo & LumaXCorp.');
+              log('Desarrollado en LumaXStudio con Astro 4.0.');
+            }
+            else if (cmd === 'neofetch') {
+              log('<span style="color:var(--primary)">L-Academy OS</span>');
+              log('------------------');
+              log('Host: LumaX-Server-v5');
+              log('Kernel: Astro 4.15.1');
+              log('Shell: LumaConsole-v2.0');
+              log('Theme: Glass-Morphism-Pro');
+              log('Developer: SrxMateo');
+              log('Studio: LumaXStudio');
+            }
             else if (cmd === 'matrix') {
               log('Inyectando modo hacker...');
               document.body.style.filter = 'hue-rotate(90deg) brightness(1.2)';
+              setTimeout(() => {
+                document.body.style.filter = '';
+                log('Hackeo completado. Estás a salvo.');
+              }, 3000);
             }
             else log(`Comando desconocido: ${cmd}`);
             

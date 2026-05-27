@@ -132,12 +132,12 @@ const categories = [
       const copyBtn = document.querySelector('.btn-copy');
       const promptText = document.getElementById('daily-prompt')?.textContent;
       if (copyBtn && promptText) {
-        copyBtn.onclick = () => {
+        copyBtn.addEventListener('click', () => {
           navigator.clipboard.writeText(promptText);
           const old = copyBtn.textContent;
           copyBtn.textContent = '¡Copiado!';
-          setTimeout(() => copyBtn.textContent = old, 2000);
-        };
+          setTimeout(() => copyBtn.textContent = old || '', 2000);
+        });
       }
 
       // Live status
@@ -152,10 +152,12 @@ const categories = [
 
       // Focus Mode
       const focusBtn = document.getElementById('focus-mode-toggle');
-      focusBtn?.onclick = () => {
-        document.body.classList.toggle('focus-active');
-        focusBtn.textContent = document.body.classList.contains('focus-active') ? '👁️ Ver Todo' : '🌙 Modo Enfoque';
-      };
+      if (focusBtn) {
+        focusBtn.addEventListener('click', () => {
+          document.body.classList.toggle('focus-active');
+          focusBtn.textContent = document.body.classList.contains('focus-active') ? '👁️ Ver Todo' : '🌙 Modo Enfoque';
+        });
+      }
 
       // Audio
       const speak = (text: string) => {
@@ -164,9 +166,15 @@ const categories = [
         u.lang = 'es-ES';
         window.speechSynthesis.speak(u);
       };
-      document.getElementById('audio-intro')?.onclick = () => speak("Bienvenido a L-Academy por SrxMateo y LumaxCorp. Disfruta el viaje.");
+      
+      const audioIntroBtn = document.getElementById('audio-intro');
+      if (audioIntroBtn) {
+        audioIntroBtn.addEventListener('click', () => speak("Bienvenido a L-Academy por SrxMateo y LumaxCorp. Disfruta el viaje."));
+      }
+
       document.querySelectorAll('.audio-guide-btn').forEach(b => {
-        (b as HTMLElement).onclick = () => speak(b.getAttribute('data-info') || '');
+        const btn = b as HTMLElement;
+        btn.addEventListener('click', () => speak(btn.getAttribute('data-info') || ''));
       });
     }
     updateLobby();
