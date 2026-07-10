@@ -1,7 +1,21 @@
-# 🎓 LAcademy — Hub de Aprendizaje Pro
+<div align="center">
+  <img src="public/assets/logo.png" alt="LAcademy Logo" width="250" />
+  <h1>🎓 LAcademy — Hub de Aprendizaje Pro</h1>
 
-![LumaXStudio & SrxMateo](https://img.shields.io/badge/Developed%20by-LumaXStudio%20%26%20SrxMateo-blue?style=for-the-badge&logo=rocket)
-![Astro](https://img.shields.io/badge/Built%20with-Astro-ff5d01?style=for-the-badge&logo=astro)
+  <p>
+    <em>Plataforma educativa de alto rendimiento diseñada para centralizar cursos, recursos y herramientas de desarrollo.</em>
+  </p>
+
+  <!-- Badges -->
+  <a href="https://lacademy.lumax.lat">
+    <img src="https://img.shields.io/badge/Website-lacademy.lumax.lat-blue?style=for-the-badge&logo=vercel" alt="Website" />
+  </a>
+  <img src="https://img.shields.io/badge/Developed%20by-LumaXStudio%20%26%20SrxMateo-6002EE?style=for-the-badge&logo=rocket" alt="Developed By" />
+  <img src="https://img.shields.io/badge/Built%20with-Astro-ff5d01?style=for-the-badge&logo=astro" alt="Astro" />
+  <img src="https://img.shields.io/badge/Language-TypeScript-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" />
+</div>
+
+<br/>
 
 **LAcademy** es una plataforma educativa de alto rendimiento diseñada para centralizar cursos, recursos y herramientas de desarrollo. Este proyecto combina una interfaz moderna con una arquitectura robusta para ofrecer la mejor experiencia de aprendizaje.
 
